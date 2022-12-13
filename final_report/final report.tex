@@ -1,0 +1,113 @@
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage{amsmath,amsfonts}
+\usepackage{hyperref}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\textheight}{8.7in}
+\setlength{\parskip}{0.35em}
+\parindent0em
+\def\R{\mathbb{R}}
+\def\RP{\mathbb{RP}}
+\def\Q{\mathbb{Q}}
+\def\Z{\mathbb{Z}}
+\def\N{\mathbb{N}}
+\def\C{\mathbb{C}}
+\def\T{\mathcal{T}}
+\def\A{\mathbb{A}}
+\usepackage{graphicx}
+\usepackage{amsthm}
+\author{Alexander Cai, Oliver Cheng}
+\date{\today}
+\title{Multi Agent Meta Reinforcement Learning on Neural Networks}
+
+\newcommand*{\vertbar}{\rule[-1ex]{0.5pt}{2.5ex}}
+\newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+
+\newenvironment{soln}{\begin{proof}[\bf{Solution}]}{\end{proof}\hrule}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+\usepackage{parskip}
+
+
+\usepackage{cite}
+
+\begin{document}
+\maketitle
+\section{Introduction to Meta-Reinforcement Learning}
+In recent years there has been a growing amount of excitement about 
+\textit{meta-learning} in order to solve a wider set of problems. This is 
+often used in reinforcement learning tasks. In a standard reinforcement
+ learning task, we have a policy that governs how an agent transitions 
+between states in an environment. There are rewards that the agent can 
+receive, and the optimal policy is one that maximizes rewards. We can 
+formalize this by defining a reinforcement learning regime as a Markov 
+Decision Process (MDP) where $S$ is the set of states, $A$ is the set 
+of actions, $T$ is the transition distribution (how states transition given 
+an action), and $R$ is the reward, which is a function of the state. Let 
+$\pi_\theta$ be the policy, which is parameterized by some $\theta$. 
+Thus for some "task" $\mathcal{T}$, the goal is thus to maximize the objective 
+\[ \mathcal{J}_{\mathcal{T}}(\theta) = \mathbb{E}_{a_t \sim \pi_\theta(s_t), s_{t+1}
+ \sim T(s_t, a_t)} \left( \sum_t \gamma^t R(s_t, a_{t-1}) \right).\]
+The task $\mathcal{T}$ determines the rewards, and hence the policy that is optimized. 
+
+Reinforcement learning is used to solve many problems such as Go, Chess, 
+Atari games, etc. where the environment is unknown and is structured in 
+a way which an agent must discover an optimal strategy. This framework 
+gives us a way to view human beings and the nervous system as a 
+reinforcement learning program where we humans are the agent. 
+(Un)Fortunately, this is a bit too basic of a way of modeling human 
+beings and the brain, as reinforcement learning networks have not taken 
+over humanity yet (citation needed). One of the reasons is that rewards 
+and the task that an agent needs to optimize a policy for is constantly 
+changing in the real world. Thus we introduce the idea of meta-learning, 
+where rather than optimizing a policy, we optimize for a learning strategy 
+on how to optimize a policy for a distribution of tasks. This idea is similar 
+to "learning how to learn" and is conceptually closer to how the brain 
+works (that one prefrontal cortex Deepind paper.). 
+
+\section{Meta-Reinforcement Learning in the Brain}
+
+Basically try and repeat the thing in Box 4 of https://www.sciencedirect.com/science/article/pii/S1364661319300610
+
+
+
+
+maybe this is garbage lol
+
+In the Theory of Neural Computation, we can see reinforcement-learning-esque
+regimes. In particular researchers have found that the dopamine system seems
+to follow the TD algorithm, a reinforcement learning algorithm. In particular, the error
+function of the TD algorithm operates in the same way to how dopamine neurons learn their firing rates in order to 
+associate stimuli with future rewards. In this case, the dopamine neuron is the agent
+and it can change its firing rate as an action. 
+
+
+
+
+
+\section{Implementation of Meta-Learning MARL}
+
+
+
+\section{Comparison to Known Learning Rules}
+
+We compare this meta-learning (learning of the best learning rule) to accepted learning rules in the literature. Stochastic gradient descent converges the quickest, but due to the weight transport problem, is not biologically plausible (citation needed). Biologically plausible alternatives involve learning from a global error signal, which has been observed (citation needed), and involve perturbation-type learning rules. We will look at node and weight perturbation in particular. 
+
+Node and weight perturbation are often used in small teacher-student learning cases 
+where there is only a single perceptron. Recent work by Hiratani et al. explores node perturbation
+in neural networks with a hidden layer, and finds computational and stability issues that
+suggest biological implausibility. Nonetheless, these perturbations remain an interesting way
+to investigate how neurons learn.
+
+MATHEMATICAL FORMULAS AND STATISTICS (maybe?) for the ideas behind WP AND NP
+
+
+
+\end{document}
