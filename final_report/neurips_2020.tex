@@ -16,6 +16,7 @@
 
 % to avoid loading the natbib package, add option nonatbib:
 \usepackage[preprint,nonatbib]{neurips_2020}
+\usepackage{amsmath}
 \def\R{\mathbb{R}}
 \def\RP{\mathbb{RP}}
 \def\Q{\mathbb{Q}}
@@ -134,6 +135,24 @@ the way we are improving the way we are finding the policy, this is a way
 we can introduce the idea of "past experiences" to help train policy for 
 tasks that are similar.
 
+\section{Implementation of Meta-Learning MARL}
+
+A very basic way to model a brain is as a simple fixed architecture feedforward neural network 
+where each neuron is its own agent and we are optimizing a multi-agent reinforcement learning problem. 
+Then, to imitate a model-free dopamine
+system which determines which synapses are reinforced, we consider a policy
+neural network which will update the weights for the neural net. The state space of
+this system is essentially the possible weights that this neural net can have. Each agent is
+therefore each node of the neural network, and the agent is essentially in control of the extent
+to which they transmit their activation. In other words, the agent corresponding to the $i$-th neuron 
+of the $\ell$-th layer, $x_i^{(\ell)}$, has control over the weights 
+$\begin{bmatrix}
+W^{(\ell)}_{1,i} \\ \vdots \\ W^{(\ell)}_{R_{\ell + 1},i} 
+\end{bmatrix}$. Actions correspond to changing these activations. This
+is the inner loop of learning. On the other hand, in order to improve the policy, we use PPO on the
+loss from each episode of learning. Reward is equivalent to negative loss, and hence the system
+is rewarded for smaller loss.
+
 \section{Meta-Reinforcement Learning in the Brain}
 
 Basically try and repeat the thing in Box 4 of https://www.sciencedirect.com/science/article/pii/S1364661319300610
@@ -152,12 +171,6 @@ and it can change its firing rate as an action.
 
 
 
-
-
-\section{Implementation of Meta-Learning MARL}
-
-A very basic way to model a brain is as a simple feedforward neural network. 
-
 \section{Comparison to Known Learning Rules}
 
 We compare this meta-learning (learning of the best learning rule) to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible (citation needed). Biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP).
@@ -168,7 +181,7 @@ then corresponds to scaling this perturbation by whether or not it increases or 
 the loss. Consider a general neural network with $L$ layers and a data set $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$. 
 Let $\*W_{\ell} \in \R^{R_{\ell+1} \times R_{\ell}}$ where $R_\ell$ is the number of 
 neurons in layer $\ell$. We define the forward pass as
-\begin{equation}\label{eqn1}\*X^{(\ell)} = \sigma\left(\*W_{\ell-1} \*X^{(\ell-1)\top}\right).\end{equation}
+\begin{equation}\label{eqn1}\*X^{(\ell)} = \sigma\left( \*X^{(\ell-1)}\*W_{\ell-1}^\top\right).\end{equation}
 Where $\sigma$ is some non-linearity such as ReLU. We use MSE loss 
 \[E = \frac 12 \| \*X^{(L)}- \*Y\|^2.\]
 In SGD, we use backpropagation to update the weight parameters by 
@@ -176,12 +189,12 @@ In SGD, we use backpropagation to update the weight parameters by
 where the chain rule means we 
 need to "transport" these values backwards through the neural network. On the other 
 hand, in WP/NP, we have two forward passes. For the first, we define the same as \ref{eqn1}, 
-however for NP, we will let the perturbation be a vector $\xi \in \R^{R_{\ell}}$ where all entries are distributed 
+however for NP, we will let the perturbation be a vector $\xi \in \R^{N\times R_{\ell}}$ where all entries are distributed 
 i.i.d $\mathcal{N}(0,\sigma)$. We can then define the forward pass as 
-\[ \widetilde{\*X}^{(\ell)} = \sigma\left(\*W_{\ell -1} \widetilde{\*X}^{(\ell-1)\top} + \*\xi^{(\ell)} \right).\]
+\[ \widetilde{\*X}^{(\ell)} = \sigma\left(\widetilde{\*X}^{(\ell-1)}\*W_{\ell -1}^\top + \*\xi^{(\ell)} \right).\]
 While for WP we take $\*\Xi^{(\ell)} \in \R^{R_{\ell + 1 }\times R_\ell}$ where all entries are distributed 
 i.i.d $\mathcal{N}(0,\sigma)$. 
-\[ \hat{\*X}^{(\ell)} = \sigma\left(\left(\*W_{\ell -1} + \*\Xi^{(\ell-1)}\right) \hat{\*X}^{(\ell-1)\top}  \right).\]
+\[ \hat{\*X}^{(\ell)} = \sigma\left( \hat{\*X}^{(\ell-1)}\left(\*W_{\ell -1} + \*\Xi^{(\ell-1)}\right)^\top  \right).\]
 We can then define two errors for each NP and WP respectively.
 \[ E_N = \frac 12 \| \widetilde{\* X}^{(L)} - \* Y \|^2 \qquad\qquad E_W = \frac 12 \| \hat{\* X}^{(L)} - \* Y \|^2. \]
 From here we can simply transmit the global error signal $E-E_N$ or $E-E_W$ and update our weights according
