@@ -173,7 +173,9 @@ and it can change its firing rate as an action.
 
 \section{Comparison to Known Learning Rules}
 
-We compare this meta-learning (learning of the best learning rule) to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible (citation needed). Biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP).
+We compare this meta-learning (learning of the best learning rule) to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible (citation needed). Biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP). We compared how our new model did for teacher-student learning and learning to classify the MNIST dataset.
+
+
 
 The idea behind node or weight perturbation is to take some perturbation $\*\xi$ of either
 the weights or the nodes, and then see how that changes the objective or loss. The learning rule update
@@ -182,8 +184,12 @@ the loss. Consider a general neural network with $L$ layers and a data set $\{\*
 Let $\*W_{\ell} \in \R^{R_{\ell+1} \times R_{\ell}}$ where $R_\ell$ is the number of 
 neurons in layer $\ell$. We define the forward pass as
 \begin{equation}\label{eqn1}\*X^{(\ell)} = \sigma\left( \*X^{(\ell-1)}\*W_{\ell-1}^\top\right).\end{equation}
-Where $\sigma$ is some non-linearity such as ReLU. We use MSE loss 
-\[E = \frac 12 \| \*X^{(L)}- \*Y\|^2.\]
+Where $\sigma$ is some non-linearity such as ReLU. We use MSE loss for student teacher
+\[E = \frac{1}{NR_L}\frac 12 \| \*X^{(L)}- \*Y\|^2.\]
+and for classification into $C = R_L$ classes let 
+\[p(\*x_i^{(L)} = r) = \frac{\exp x_{j,r}^{(L)}}{\sum_{j=1}^C \exp x_{i,j}^{(L)}}\] 
+we use cross entropy loss
+\[E = -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\*x_i^{(L)} = r) \]
 In SGD, we use backpropagation to update the weight parameters by 
 \[\Delta_{SGD} \* W_{\ell} = \eta\frac{\partial E}{\partial \*W_{\ell}},\] 
 where the chain rule means we 
@@ -195,8 +201,10 @@ i.i.d $\mathcal{N}(0,\sigma)$. We can then define the forward pass as
 While for WP we take $\*\Xi^{(\ell)} \in \R^{R_{\ell + 1 }\times R_\ell}$ where all entries are distributed 
 i.i.d $\mathcal{N}(0,\sigma)$. 
 \[ \hat{\*X}^{(\ell)} = \sigma\left( \hat{\*X}^{(\ell-1)}\left(\*W_{\ell -1} + \*\Xi^{(\ell-1)}\right)^\top  \right).\]
-We can then define two errors for each NP and WP respectively.
-\[ E_N = \frac 12 \| \widetilde{\* X}^{(L)} - \* Y \|^2 \qquad\qquad E_W = \frac 12 \| \hat{\* X}^{(L)} - \* Y \|^2. \]
+We can then define two errors for each NP and WP respectively. For MSE
+\[ E_N = \frac{1}{NR_L} \frac 12 \| \widetilde{\* X}^{(L)} - \* Y \|^2 \qquad\qquad E_W = \frac{1}{NR_L} \frac 12 \| \hat{\* X}^{(L)} - \* Y \|^2. \]
+For classification
+\[E_N  =  -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\widetilde{\*x}_i^{(L)} = r) \qquad E_W =  -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\hat{\*x}_i^{(L)} = r)\]
 From here we can simply transmit the global error signal $E-E_N$ or $E-E_W$ and update our weights according
 to this error signal. In particular, we update parameters as follows for NP
 \[ \Delta_{NP} \*W_{\ell} =\frac{\eta}{\sigma} (E-E_N) \sum_{i=1}^{R_{\ell+1}} \*x^{(\ell)}_i \* \xi^{(\ell+1)\top} \]
@@ -206,12 +214,23 @@ While for WP we update as
  the parameters of the model. In expectation we have that up to a constant
 \[ \left\langle \Delta_{NP}\*W_{\ell} \right\rangle_{\*\xi^{(\ell)}}= \left\langle \Delta_{WP}\*W_{\ell} \right\rangle_{\*\Xi^{(\ell)}} =  \Delta_{SGD}\*W_{\ell}.\]
 
- 
+
 Node and weight perturbation are often used in small teacher-student learning cases 
 where there is only a single perceptron. Recent work by Hiratani et al. explores node perturbation
 in neural networks with a hidden layer, and finds computational and stability issues that
 suggest biological implausibility (cite hiratani et al). Nonetheless, these perturbation techniques remain an interesting way
 to investigate possible learning rules for neurons. 
+
+For the student-teacher model, we consider a neural network with one hidden layer. We set the three layer's width as $L_x = 10, L_h = 100, L_y = 10$. We have a teacher which generates out
+
+Going to MNIST, the problem becomes much more noisy. In order to decrease noise, we first preprocessed by projecting the
+data onto the first 10 principal components ($>99\%$ of the variance), and decreased the learning rate 
+by a factor of 100. It was also necessary to increase the hidden layer width $L_h = 1000$, as otherwise the model did not
+have sufficient complexity. As observed by Hiratani et al. the amount of training time required 
+for these global error signal models to converge for MNIST is much higher, and took too
+long for the scope of this project. The results are detailed in Fig XXXXX. 
+
+
 
 
 
