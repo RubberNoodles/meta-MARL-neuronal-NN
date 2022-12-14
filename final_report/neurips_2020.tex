@@ -1,0 +1,355 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2020
+
+% ready for submission
+% \usepackage{neurips_2020}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2020}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2020}
+
+% to avoid loading the natbib package, add option nonatbib:
+\usepackage[preprint,nonatbib]{neurips_2020}
+\def\R{\mathbb{R}}
+\def\RP{\mathbb{RP}}
+\def\Q{\mathbb{Q}}
+\def\Z{\mathbb{Z}}
+\def\N{\mathbb{N}}
+\def\C{\mathbb{C}}
+\def\T{\mathcal{T}}
+\def\A{\mathbb{A}}
+\def\*#1{\mathbf{#1}}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+% \title{Formatting Instructions For NeurIPS 2020}
+\title{Multi Agent Meta Reinforcement Learning on Neural Networks}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  Alexander D.~Cai \\
+  Harvard School of Engineering\\
+  Harvard College \\
+  Cambridge, MA 02138 \\
+  \texttt{alexcai@college.harvard.edu} \\
+  \And
+  Oliver Cheng \\
+  Department of Mathematics \\
+  Harvard College \\
+  Cambridge, MA 02138 \\
+  \texttt{ocheng@college.harvard.edu} \\
+  % David S.~Hippocampus \\
+  % Department of Computer Science\\
+  % Cranberry-Lemon University\\
+  % Pittsburgh, PA 15213 \\
+  % \texttt{hippo@cs.cranberry-lemon.edu} \\
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
+  both the left- and right-hand margins. Use 10~point type, with a vertical
+  spacing (leading) of 11~points.  The word \textbf{Abstract} must be centered,
+  bold, and in point size 12. Two line spaces precede the abstract. The abstract
+  must be limited to one paragraph.
+\end{abstract}
+\section{Introduction to Meta-Reinforcement Learning}
+In recent years there has been a growing amount of excitement about 
+\textit{meta-learning} in order to solve a wider set of problems. This is 
+often used in reinforcement learning tasks. In a standard reinforcement
+ learning task, we have a policy that governs how an agent transitions 
+between states in an environment. There are rewards that the agent can 
+receive, and the optimal policy is one that maximizes rewards. We can 
+formalize this by defining a reinforcement learning regime as a Markov 
+Decision Process (MDP) where $S$ is the set of states, $A$ is the set 
+of actions, $T$ is the transition distribution (how states transition given 
+an action), and $R$ is the reward, which is a function of the state. Let 
+$\pi_\theta$ be the policy, which is parameterized by some $\theta$. 
+Thus for some "task" $\mathcal{T}$, the goal is thus to maximize the objective 
+\[ \mathcal{J}_{\mathcal{T}}(\theta) = \mathbb{E}_{a_t \sim \pi_\theta(s_t), s_{t+1}
+ \sim T(s_t, a_t)} \left( \sum_t \gamma^t R(s_t, a_{t-1}) \right).\]
+The task $\mathcal{T}$ determines the rewards, and hence the policy that is optimized 
+depend heavily on what the task $\mathcal{T}$ is. 
+
+Reinforcement learning is used to solve many problems such as Go, Chess, 
+Atari games, etc. where the environment is unknown and is structured in 
+a way which an agent must discover an optimal strategy. This framework 
+gives us a way to view human beings and the nervous system as a 
+reinforcement learning program where we humans are the agent. 
+(Un)Fortunately, this is a bit too basic of a way of modeling human 
+beings and the brain, as reinforcement learning networks have not taken 
+over humanity yet (citation needed). One of the reasons is that rewards 
+and the task that an agent needs to optimize a policy for is constantly 
+changing in the real world. Thus we introduce the idea of meta-learning, 
+where rather than optimizing a single policy for a single task $\mathcal{T}$, 
+we optimize for a learning strategy on how to optimize a policy for a distribution 
+of tasks $p(\mathcal{T})$. This idea is motivated by the idea in psychology of 
+ "learning how to learn" and is conceptually closer to how the brain 
+works (that one prefrontal cortex Deepind paper.). With meta-learning, due to
+the way we are improving the way we are finding the policy, this is a way
+we can introduce the idea of "past experiences" to help train policy for 
+tasks that are similar.
+
+\section{Meta-Reinforcement Learning in the Brain}
+
+Basically try and repeat the thing in Box 4 of https://www.sciencedirect.com/science/article/pii/S1364661319300610
+
+
+
+
+maybe this is garbage lol
+
+In the Theory of Neural Computation, we can see reinforcement-learning-esque
+regimes. In particular researchers have found that the dopamine system seems
+to follow the TD algorithm, a reinforcement learning algorithm. In particular, the error
+function of the TD algorithm operates in the same way to how dopamine neurons learn their firing rates in order to 
+associate stimuli with future rewards. In this case, the dopamine neuron is the agent
+and it can change its firing rate as an action. 
+
+
+
+
+
+\section{Implementation of Meta-Learning MARL}
+
+A very basic way to model a brain is as a simple feedforward neural network. 
+
+\section{Comparison to Known Learning Rules}
+
+We compare this meta-learning (learning of the best learning rule) to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible (citation needed). Biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP).
+
+The idea behind node or weight perturbation is to take some perturbation $\*\xi$ of either
+the weights or the nodes, and then see how that changes the objective or loss. The learning rule update
+then corresponds to scaling this perturbation by whether or not it increases or decreases
+the loss. Consider a general neural network with $L$ layers and a data set $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$. 
+Let $\*W_{\ell} \in \R^{R_{\ell+1} \times R_{\ell}}$ where $R_\ell$ is the number of 
+neurons in layer $\ell$. We define the forward pass as
+\begin{equation}\label{eqn1}\*X^{(\ell)} = \sigma\left(\*W_{\ell-1} \*X^{(\ell-1)\top}\right).\end{equation}
+Where $\sigma$ is some non-linearity such as ReLU. We use MSE loss 
+\[E = \frac 12 \| \*X^{(L)}- \*Y\|^2.\]
+In SGD, we use backpropagation to update the weight parameters by 
+\[\Delta_{SGD} \* W_{\ell} = \eta\frac{\partial E}{\partial \*W_{\ell}},\] 
+where the chain rule means we 
+need to "transport" these values backwards through the neural network. On the other 
+hand, in WP/NP, we have two forward passes. For the first, we define the same as \ref{eqn1}, 
+however for NP, we will let the perturbation be a vector $\xi \in \R^{R_{\ell}}$ where all entries are distributed 
+i.i.d $\mathcal{N}(0,\sigma)$. We can then define the forward pass as 
+\[ \widetilde{\*X}^{(\ell)} = \sigma\left(\*W_{\ell -1} \widetilde{\*X}^{(\ell-1)\top} + \*\xi^{(\ell)} \right).\]
+While for WP we take $\*\Xi^{(\ell)} \in \R^{R_{\ell + 1 }\times R_\ell}$ where all entries are distributed 
+i.i.d $\mathcal{N}(0,\sigma)$. 
+\[ \hat{\*X}^{(\ell)} = \sigma\left(\left(\*W_{\ell -1} + \*\Xi^{(\ell-1)}\right) \hat{\*X}^{(\ell-1)\top}  \right).\]
+We can then define two errors for each NP and WP respectively.
+\[ E_N = \frac 12 \| \widetilde{\* X}^{(L)} - \* Y \|^2 \qquad\qquad E_W = \frac 12 \| \hat{\* X}^{(L)} - \* Y \|^2. \]
+From here we can simply transmit the global error signal $E-E_N$ or $E-E_W$ and update our weights according
+to this error signal. In particular, we update parameters as follows for NP
+\[ \Delta_{NP} \*W_{\ell} =\frac{\eta}{\sigma} (E-E_N) \sum_{i=1}^{R_{\ell+1}} \*x^{(\ell)}_i \* \xi^{(\ell+1)\top} \]
+While for WP we update as
+\[ \Delta_{WP} \*W_{\ell} = \frac{\eta}{\sigma} (E-E_W) \* \Xi^{(\ell)} \]
+ The idea is that perturbations which cause decrease the objective will be added to 
+ the parameters of the model. In expectation we have that up to a constant
+\[ \left\langle \Delta_{NP}\*W_{\ell} \right\rangle_{\*\xi^{(\ell)}}= \left\langle \Delta_{WP}\*W_{\ell} \right\rangle_{\*\Xi^{(\ell)}} =  \Delta_{SGD}\*W_{\ell}.\]
+
+ 
+Node and weight perturbation are often used in small teacher-student learning cases 
+where there is only a single perceptron. Recent work by Hiratani et al. explores node perturbation
+in neural networks with a hidden layer, and finds computational and stability issues that
+suggest biological implausibility (cite hiratani et al). Nonetheless, these perturbation techniques remain an interesting way
+to investigate possible learning rules for neurons. 
+
+
+
+
+\section{Citations, figures, tables, references}
+\label{others}
+
+These instructions apply to everyone.
+
+\subsection{Citations within the text}
+
+The \verb+natbib+ package will be loaded for you by default.  Citations may be
+author/year or numeric, as long as you maintain internal consistency.  As to the
+format of the references themselves, any style is acceptable as long as it is
+used consistently.
+
+The documentation for \verb+natbib+ may be found at
+\begin{center}
+  \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
+\end{center}
+Of note is the command \verb+\citet+, which produces citations appropriate for
+use in inline text.  For example,
+\begin{verbatim}
+   \citet{hasselmo} investigated\dots
+\end{verbatim}
+produces
+\begin{quote}
+  Hasselmo, et al.\ (1995) investigated\dots
+\end{quote}
+
+If you wish to load the \verb+natbib+ package with options, you may add the
+following before loading the \verb+neurips_2020+ package:
+\begin{verbatim}
+   \PassOptionsToPackage{options}{natbib}
+\end{verbatim}
+
+If \verb+natbib+ clashes with another package you load, you can add the optional
+argument \verb+nonatbib+ when loading the style file:
+\begin{verbatim}
+   \usepackage[nonatbib]{neurips_2020}
+\end{verbatim}
+
+As submission is double blind, refer to your own published work in the third
+person. That is, use ``In the previous work of Jones et al.\ [4],'' not ``In our
+previous work [4].'' If you cite your other papers that are not widely available
+(e.g., a journal paper under review), use anonymous author names in the
+citation, e.g., an author of the form ``A.\ Anonymous.''
+
+\subsection{Footnotes}
+
+Footnotes should be used sparingly.  If you do require a footnote, indicate
+footnotes with a number\footnote{Sample of the first footnote.} in the
+text. Place the footnotes at the bottom of the page on which they appear.
+Precede the footnote with a horizontal rule of 2~inches (12~picas).
+
+Note that footnotes are properly typeset \emph{after} punctuation
+marks.\footnote{As in this example.}
+
+\subsection{Figures}
+
+\begin{figure}
+  \centering
+  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+  \caption{Sample figure caption.}
+\end{figure}
+
+All artwork must be neat, clean, and legible. Lines should be dark enough for
+purposes of reproduction. The figure number and caption always appear after the
+figure. Place one line space before the figure caption and one line space after
+the figure. The figure caption should be lower case (except for first word and
+proper nouns); figures are numbered consecutively.
+
+You may use color figures.  However, it is best for the figure captions and the
+paper body to be legible if the paper is printed in either black/white or in
+color.
+
+\subsection{Tables}
+
+All tables must be centered, neat, clean and legible.  The table number and
+title always appear before the table.  See Table~\ref{sample-table}.
+
+Place one line space before the table title, one line space after the
+table title, and one line space after the table. The table title must
+be lower case (except for first word and proper nouns); tables are
+numbered consecutively.
+
+Note that publication-quality tables \emph{do not contain vertical rules.} We
+strongly suggest the use of the \verb+booktabs+ package, which allows for
+typesetting high-quality, professional tables:
+\begin{center}
+  \url{https://www.ctan.org/pkg/booktabs}
+\end{center}
+This package was used to typeset Table~\ref{sample-table}.
+
+\begin{table}
+  \caption{Sample table title}
+  \label{sample-table}
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    \multicolumn{2}{c}{Part}                   \\
+    \cmidrule(r){1-2}
+    Name     & Description     & Size ($\mu$m) \\
+    \midrule
+    Dendrite & Input terminal  & $\sim$100     \\
+    Axon     & Output terminal & $\sim$10      \\
+    Soma     & Cell body       & up to $10^6$  \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\section*{Broader Impact}
+
+Authors are required to include a statement of the broader impact of their work, including its ethical aspects and future societal consequences. 
+Authors should discuss both positive and negative outcomes, if any. For instance, authors should discuss a) 
+who may benefit from this research, b) who may be put at disadvantage from this research, c) what are the consequences of failure of the system, and d) whether the task/method leverages
+biases in the data. If authors believe this is not applicable to them, authors can simply state this.
+
+Use unnumbered first level headings for this section, which should go at the end of the paper. {\bf Note that this section does not count towards the eight pages of content that are allowed.}
+
+\begin{ack}
+Use unnumbered first level headings for the acknowledgments. All acknowledgments
+go at the end of the paper before the list of references. Moreover, you are required to declare 
+funding (financial activities supporting the submitted work) and competing interests (related financial activities outside the submitted work). 
+More information about this disclosure can be found at: \url{https://neurips.cc/Conferences/2020/PaperInformation/FundingDisclosure}.
+
+
+Do {\bf not} include this section in the anonymized submission, only in the final paper. You can use the \texttt{ack} environment provided in the style file to autmoatically hide this section in the anonymized submission.
+\end{ack}
+
+\section*{References}
+
+References follow the acknowledgments. Use unnumbered first-level heading for
+the references. Any choice of citation style is acceptable as long as you are
+consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
+when listing the references.
+{\bf Note that the Reference section does not count towards the eight pages of content that are allowed.}
+\medskip
+
+\small
+
+[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
+connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
+(eds.), {\it Advances in Neural Information Processing Systems 7},
+pp.\ 609--616. Cambridge, MA: MIT Press.
+
+[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
+  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
+TELOS/Springer--Verlag.
+
+[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
+recall at excitatory recurrent synapses and cholinergic modulation in rat
+hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
+
+\end{document}

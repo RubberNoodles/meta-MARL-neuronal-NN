@@ -9,15 +9,6 @@
 \setlength{\textheight}{8.7in}
 \setlength{\parskip}{0.35em}
 \parindent0em
-\def\R{\mathbb{R}}
-\def\RP{\mathbb{RP}}
-\def\Q{\mathbb{Q}}
-\def\Z{\mathbb{Z}}
-\def\N{\mathbb{N}}
-\def\C{\mathbb{C}}
-\def\T{\mathcal{T}}
-\def\A{\mathbb{A}}
-\def\*#1{\mathbf{#1}}
 \usepackage{graphicx}
 \usepackage{amsthm}
 \author{Alexander Cai, Oliver Cheng}
@@ -71,9 +62,12 @@ and the task that an agent needs to optimize a policy for is constantly
 changing in the real world. Thus we introduce the idea of meta-learning, 
 where rather than optimizing a single policy for a single task $\mathcal{T}$, 
 we optimize for a learning strategy on how to optimize a policy for a distribution 
-of tasks $p(\mathcal{T})$. This idea is motivated by the idea in psychology of
+of tasks $p(\mathcal{T})$. This idea is motivated by the idea in psychology of 
  "learning how to learn" and is conceptually closer to how the brain 
-works (that one prefrontal cortex Deepind paper.). 
+works (that one prefrontal cortex Deepind paper.). With meta-learning, due to
+the way we are improving the way we are finding the policy, this is a way
+we can introduce the idea of "past experiences" to help train policy for 
+tasks that are similar.
 
 \section{Meta-Reinforcement Learning in the Brain}
 
