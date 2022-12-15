@@ -133,9 +133,9 @@ works \cite{wang2018pfc}.
 \end{figure}
  
 
-We model neural network training as follows. We aim to optimize the parameters of a ``base'' network $f_{\phi},$ parameterized by $\phi \in \Phi$, to minimize the training error on a dataset. Then, to imitate a model-based dopamine
+We model neural network training as follows. We aim to optimize the parameters of a ``base'' network $f_{\phi},$ parameterized by $\phi \in \Phi$, to minimize the training error on a dataset $\mathcal{D}_{\text{train}}$. Then, to imitate a model-based dopamine
 system which determines which synapses are reinforced, we consider a policy
-neural network which will update the weights for the neural net \cite{wang2018pfc, botvinick2019408}. The state space and action space of the MDP thus coincide with $\Phi$.
+neural network which will update the weights for the neural net \cite{wang2018pfc, botvinick2019408}. To formulate its training as an MDP, we let the state space and action space coincide with $\Phi$, and we let $P(s, a) = a$, and $R$ be the negative of the training loss over $\mathcal{D}_{\text{train}}$.
 
 From here we can construct two different
 systems. One is where a single agent gets information on all of the weights,
@@ -148,19 +148,7 @@ the network, but rather a local subset of them. Unfortunately, although the seco
 with current libraries is shaky at best. Theoretically it would not perform any better than the first system, as each agent has less information
 to operate on, and since the policy is a deep neural network, the loss of this information would be a large hindrance to performance.
 
-We use Proximal Policy Optimization (PPO) in order to progressively improve the policy. We can define
-our reward as the negative loss for the neural network, thus having smaller absolute loss will be a larger reward, and
-PPO will find a policy that optimizes for the largest expected reward. To compute the reward for any given policy, we 
-take $T$ different trajectories. For each trajectory $t$ we find how the loss $E_t$ 
-decreases after a successive forward passes (1e5 epochs) through the neural 
-network with weights specified by the agent/policy network. The reward is 
-then transmitted as $\langle - E_t \rangle$ and the policy is updated. This process constitutes a single timestep.
-
-Recall from SGD we have update rules that involve using the gradient to traverse through the loss landscape,
-in our case we are learning a learning rule and hence the meta "learning how to learn" concept. The goal is for
-the policy to converge to a learning rule that is optimal for the given task, which will not necessarily be SGD
-or learning with global error signals that we will look at below, but rather one that is more fine-tuned to the particular
-set of problems, for example learning from a teacher with noise or classifying digits in the MNIST dataset.
+We use Proximal Policy Optimization (PPO) \cite{schulman_ppo} in order to learn the meta-network $\pi_{\theta}$. At a high level, this fits into the broader class of policy gradient algorithms in which we simply update $\theta$ in the direction of the gradient of the policy's expected return. PPO extends this by constraining the size of the update step in terms of the KL divergence between the new policy and the current one.
 
 
 \paragraph{Code Implementation} The project is implemented using the popular \href{https://www.gymlibrary.dev/}{OpenAI Gym} and \href{https://stable-baselines3.readthedocs.io/en/master/}{Stable Baselines 3} libraries for reinforcement learning \cite{openaigym, sb3}. We implement a custom Gym environment that takes the base neural network architecture as an input, along with the training dataset used for calculating the loss. Then at each timestep, the environment receives a candidate set of weights for the base network, and evaluates its loss on the given dataset.
@@ -169,12 +157,12 @@ We attempted to implement a multi-agent environment using the more advanced but 
 
 \section{Comparison to Known Learning Rules}
 
-We compare the policy that is learned from our meta-RL model to accepted learning rules in the literature. SGD converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at NP and WP. We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
+We compare the policy that is learned from our meta-RL model to accepted learning rules in the literature. SGD converges the quickest, but due to the weight transport problem involved in backpropagation, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will investigate node perturbation (NP) and weight perturbation (WP). We compare our new model's performance on a simple teacher-student learning task, in which the data is randomly generated by a two-layer ReLU network, and image classification on the classic MNIST dataset.
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.43]{sgd_ts}  \includegraphics[scale=0.43]{np_ts}  \includegraphics[scale=0.43]{wp_ts}\includegraphics[scale=0.31]{metarl_ts}
-  \caption{We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform minimal further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac{1}{L_y L_h}$. \label{fig:teachstudent}}
+  \caption{We find that the policy that the meta-RL system finds is to instantly jump to a fixed set of weights and then remain there. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac{1}{L_y L_h}$. \label{fig:teachstudent}}
 \end{figure}
 
 The idea behind NP and WP is to take some perturbation $\*\xi$ of either
@@ -265,9 +253,9 @@ by choosing more trajectories for each timestep and training for a longer period
 
 \paragraph{Meta-Reinforcement Learning in the Brain} Wang et al. discussed the 
 a notion of "meta-learning" in the brain where the prefrontal cortex acts as a recurrent neural network which triggers actions
-and internally holding a notion of the value of a state. Phasic Dopamine (DA) is suggested to act in a similar way to
+and internally represents a value function. Phasic Dopamine (DA) is suggested to act in a similar way to
 how our policy network changed the weights of the neural network. In particular, the synaptic weights are adjusted
-by the model-free RL DA system, where DA releases are similar to the reward prediction error in temporal-difference 
+by the model-free DA system, where DA releases are similar to the reward prediction error in temporal-difference 
 RL algorithms. The reason why meta-RL fits this structure better than standard RL is because of the ability to use past 
 experiences the brain has in order to learn an optimal policy, and this is clearly seen in human and animal brains \cite{wang2018pfc}.
 
