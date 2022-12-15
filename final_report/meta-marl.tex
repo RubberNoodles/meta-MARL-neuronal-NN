@@ -1,7 +1,7 @@
 \documentclass{article}
 
 % if you need to pass options to natbib, use, e.g.:
-%     \PassOptionsToPackage{numbers, compress}{natbib}
+\PassOptionsToPackage{square, numbers}{natbib}
 % before loading neurips_2020
 
 % ready for submission
@@ -15,7 +15,8 @@
 %     \usepackage[final]{neurips_2020}
 
 % to avoid loading the natbib package, add option nonatbib:
-\usepackage[preprint,nonatbib]{neurips_2020}
+
+\usepackage[preprint]{neurips_2020}
 \usepackage{amsmath}
 \def\R{\mathbb{R}}
 \def\RP{\mathbb{RP}}
@@ -27,6 +28,10 @@
 \def\A{\mathbb{A}}
 \def\*#1{\mathbf{#1}}
 
+\bibliographystyle{abbrvnat}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
 \usepackage[utf8]{inputenc} % allow utf-8 input
 \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
 \usepackage{hyperref}       % hyperlinks
@@ -87,6 +92,7 @@
   % \texttt{email} \\
 }
 
+
 \begin{document}
 
 \maketitle
@@ -96,9 +102,10 @@
   both the left- and right-hand margins. Use 10~point type, with a vertical
   spacing (leading) of 11~points.  The word \textbf{Abstract} must be centered,
   bold, and in point size 12. Two line spaces precede the abstract. The abstract
-  must be limited to one paragraph.
+  must be limited to one paragraph.\cite{wang2018pfc}
 \end{abstract}
 \section{Introduction to Meta-Reinforcement Learning}
+
 In recent years there has been a growing amount of excitement about 
 \textit{meta-learning} in order to solve a wider set of problems. This is 
 often used in reinforcement learning tasks. In a standard reinforcement
@@ -130,71 +137,81 @@ where rather than optimizing a single policy for a single task $\mathcal{T}$,
 we optimize for a learning strategy on how to optimize a policy for a distribution 
 of tasks $p(\mathcal{T})$. This idea is motivated by the idea in psychology of 
  "learning how to learn" and is conceptually closer to how the brain 
-works (that one prefrontal cortex Deepind paper.). With meta-learning, due to
+works \cite{wang2018pfc}. With meta-learning, due to
 the way we are improving the way we are finding the policy, this is a way
 we can introduce the idea of "past experiences" to help train policy for 
 tasks that are similar.
 
-\section{Implementation of Meta-Learning MARL}
+\section{Multi-Agent Meta-Learning RL to find Optimal Learning Rules}
 
 A very basic way to model a brain is as a simple fixed architecture feedforward neural network 
 where each neuron is its own agent and we are optimizing a multi-agent reinforcement learning problem. 
-Then, to imitate a model-free dopamine
+Then, to imitate a model-based dopamine
 system which determines which synapses are reinforced, we consider a policy
-neural network which will update the weights for the neural net. The state space of
-this system is essentially the possible weights that this neural net can have. Each agent is
-therefore each node of the neural network, and the agent is essentially in control of the extent
-to which they transmit their activation. In other words, the agent corresponding to the $i$-th neuron 
-of the $\ell$-th layer, $x_i^{(\ell)}$, has control over the weights 
-$\begin{bmatrix}
-W^{(\ell)}_{1,i} \\ \vdots \\ W^{(\ell)}_{R_{\ell + 1},i} 
-\end{bmatrix}$. Actions correspond to changing these activations. This
-is the inner loop of learning. On the other hand, in order to improve the policy, we use PPO on the
-loss from each episode of learning. Reward is equivalent to negative loss, and hence the system
-is rewarded for smaller loss.
+neural network which will update the weights for the neural net \cite{wang2018pfc, botvinick2019408}. The state space of
+this system is essentially the possible weights that this neural net can have. 
 
-\section{Meta-Reinforcement Learning in the Brain}
+From here we construct two different
+systems and compare them. One is where a single agent gets information on all of the weights,
+and can take actions to improve weights accordingly. This is less biologically plausible since it would be difficult
+for any neuron in the brain to have access to have all of this data. The second system we consider is setting one agent
+for each layer. Each agent has information about the previous layer's weights and activations, and is able to control
+the weights to the next layer. In other words, the agent corresponding to the the $\ell$-th layer, $\*x^{(\ell)}$, has control over the weights 
+$[\*W^{(\ell)}]_{ij}$. 
 
-Basically try and repeat the thing in Box 4 of https://www.sciencedirect.com/science/article/pii/S1364661319300610
+In both systems, we use Proximal Policy Optimization (PPO) in order to progressively improve the policy. We can define
+our reward as the negative loss for the neural network, thus having smaller absolute loss will be a larger reward, and
+PPO will find a policy that optimizes for the largest expected reward. To compute the reward for any given policy, we 
+take $T$ different trajectories. For each trajectory $t$ we find how the loss $E_t$ 
+decreases after a successive forward passes (1e5 epochs) through the neural 
+network with weights specified by the agent/policy network. The reward is 
+then transmitted as $\langle - E_t \rangle$ and the policy is updated. This process constitutes a single timestep.
 
+Recall from Stochastic Gradient Descent (SGD) we have update rules that involve using the gradient to traverse through the loss landscape,
+in our case we are learning a learning rule and hence the meta "learning how to learn" concept. The goal is for
+the policy to converge to a learning rule that is optimal for the given task, which will not necessarily be SGD
+or learning with global error signals that we will look at below, but rather one that is more fine-tuned to the particular
+set of problems, for example learning from a teacher with noise or classifying digits in the MNIST dataset.
 
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.6]{marlnn} \includegraphics[scale=0.6]{singleagent}
+  \caption{We have the two meta-rl systems that we will build out \label{fig:meta-rl}}
+\end{figure}
+ 
 
-
-maybe this is garbage lol
-
-In the Theory of Neural Computation, we can see reinforcement-learning-esque
-regimes. In particular researchers have found that the dopamine system seems
-to follow the TD algorithm, a reinforcement learning algorithm. In particular, the error
-function of the TD algorithm operates in the same way to how dopamine neurons learn their firing rates in order to 
-associate stimuli with future rewards. In this case, the dopamine neuron is the agent
-and it can change its firing rate as an action. 
-
-
+\paragraph{PettingZoo and others...} \textcolor{red}{Hi alex can you do this part}
 
 \section{Comparison to Known Learning Rules}
 
-We compare this meta-learning (learning of the best learning rule) to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible (citation needed). Biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP). We compared how our new model did for teacher-student learning and learning to classify the MNIST dataset.
+We compare this meta-learning, or learning learning rules, to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP). We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
 
 
 
-The idea behind node or weight perturbation is to take some perturbation $\*\xi$ of either
+The idea behind NP and WP is to take some perturbation $\*\xi$ of either
 the weights or the nodes, and then see how that changes the objective or loss. The learning rule update
 then corresponds to scaling this perturbation by whether or not it increases or decreases
 the loss. Consider a general neural network with $L$ layers and a data set $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$. 
 Let $\*W_{\ell} \in \R^{R_{\ell+1} \times R_{\ell}}$ where $R_\ell$ is the number of 
 neurons in layer $\ell$. We define the forward pass as
-\begin{equation}\label{eqn1}\*X^{(\ell)} = \sigma\left( \*X^{(\ell-1)}\*W_{\ell-1}^\top\right).\end{equation}
+\begin{equation}\label{forward}\*X^{(\ell)} = \sigma\left( \*X^{(\ell-1)}\*W_{\ell-1}^\top\right).\end{equation}
 Where $\sigma$ is some non-linearity such as ReLU. We use MSE loss for student teacher
-\[E = \frac{1}{NR_L}\frac 12 \| \*X^{(L)}- \*Y\|^2.\]
+\begin{equation}
+\label{mseloss}
+E = \frac{1}{NR_L}\frac 12 \| \*X^{(L)}- \*Y\|^2.
+\end{equation}
 and for classification into $C = R_L$ classes let 
-\[p(\*x_i^{(L)} = r) = \frac{\exp x_{j,r}^{(L)}}{\sum_{j=1}^C \exp x_{i,j}^{(L)}}\] 
+\begin{equation}
+\label{crossentropy}
+p(\*x_i^{(L)} = r) = \frac{\exp x_{j,r}^{(L)}}{\sum_{j=1}^C \exp x_{i,j}^{(L)}}
+\end{equation}
 we use cross entropy loss
 \[E = -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\*x_i^{(L)} = r) \]
 In SGD, we use backpropagation to update the weight parameters by 
 \[\Delta_{SGD} \* W_{\ell} = \eta\frac{\partial E}{\partial \*W_{\ell}},\] 
 where the chain rule means we 
 need to "transport" these values backwards through the neural network. On the other 
-hand, in WP/NP, we have two forward passes. For the first, we define the same as \ref{eqn1}, 
+hand, in WP/NP, we have two forward passes. For the first, we define the same as \ref{forward}, 
 however for NP, we will let the perturbation be a vector $\xi \in \R^{N\times R_{\ell}}$ where all entries are distributed 
 i.i.d $\mathcal{N}(0,\sigma)$. We can then define the forward pass as 
 \[ \widetilde{\*X}^{(\ell)} = \sigma\left(\widetilde{\*X}^{(\ell-1)}\*W_{\ell -1}^\top + \*\xi^{(\ell)} \right).\]
@@ -213,23 +230,65 @@ While for WP we update as
  The idea is that perturbations which cause decrease the objective will be added to 
  the parameters of the model. In expectation we have that up to a constant
 \[ \left\langle \Delta_{NP}\*W_{\ell} \right\rangle_{\*\xi^{(\ell)}}= \left\langle \Delta_{WP}\*W_{\ell} \right\rangle_{\*\Xi^{(\ell)}} =  \Delta_{SGD}\*W_{\ell}.\]
-
-
 Node and weight perturbation are often used in small teacher-student learning cases 
 where there is only a single perceptron. Recent work by Hiratani et al. explores node perturbation
 in neural networks with a hidden layer, and finds computational and stability issues that
-suggest biological implausibility (cite hiratani et al). Nonetheless, these perturbation techniques remain an interesting way
+suggest biological implausibility \cite{hiratani2022on}. Nonetheless, these perturbation techniques remain an interesting way
 to investigate possible learning rules for neurons. 
 
-For the student-teacher model, we consider a neural network with one hidden layer. We set the three layer's width as $L_x = 10, L_h = 100, L_y = 10$. We have a teacher which generates out
+\begin{figure}
+  \centering
+  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+  \caption{Discuss the results from teacher-student here  \label{fig:teachstudent}}
+\end{figure}
 
-Going to MNIST, the problem becomes much more noisy. In order to decrease noise, we first preprocessed by projecting the
-data onto the first 10 principal components ($>99\%$ of the variance), and decreased the learning rate 
-by a factor of 100. It was also necessary to increase the hidden layer width $L_h = 1000$, as otherwise the model did not
-have sufficient complexity. As observed by Hiratani et al. the amount of training time required 
-for these global error signal models to converge for MNIST is much higher, and took too
-long for the scope of this project. The results are detailed in Fig XXXXX. 
 
+
+\paragraph{Training on Student-Teacher (Fig. \ref{fig:teachstudent})} For the student-teacher model, we consider a neural network with one hidden layer. We set the three layer's width as $L_x = 10, L_h = 100, L_y = 10$. We have a teacher with a hidden set of weights $\*W^*_h, \*W^*_y$ that generates a dataset $N=512$ with noise $\*\zeta_i \in \R^{L_y}$ for $i=1,\ldots, N$, where each element of $\*\zeta_i$ is i.i.d $\mathcal{N}(0, \sigma_t)$. For our cases we set $\sigma_t = 0.01$ as node-perturbation will be very noisy and unstable otherwise. We define our dataset then as $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$ where each element of $\*x_i$ is i.i.d standard normal, and 
+\[ \*y_i = \sigma\left(\sigma(\*x_i \*W^{*\top}_h)\*W_y^{*\top}\right) + \*\zeta_i \]
+Where we used ReLU as the non-linearity for $\sigma$. We are thus optimizing a single-hidden layer neural network 
+\[ \hat{\*y}_i =  \sigma\left(\sigma(\*x_i \*W^{\top}_h)\*W_y^{\top}\right).\]
+We are using MSE loss as in \ref{mseloss}.
+\begin{figure}
+  \centering
+  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+  \caption{Discuss the results from teacher-student here  \label{fig:mnist}}
+\end{figure}
+
+
+\paragraph{Training on MNIST (Fig. \ref{fig:mnist})} Going to MNIST, the problem becomes much more noisy. 
+In order to decrease noise, we first preprocess by standardizing and projecting the
+data onto the first 10 principal components ($\sim99\%$ of the variance), and decrease the learning rate 
+by a factor of 100. It is also necessary to increase the hidden layer width $L_h = 1000$, as otherwise the model did not
+have sufficient complexity. We use the same single-hidden layer architecture, with cross entropy loss as in \ref{crossentropy} with $C=10$ for the 10 different digits. As observed by Hiratani et al., the amount of training time required 
+for these global error signal models to converge for MNIST is much higher (1e5) which was unfeasible for computationally \cite{hiratani2022on}.
+We find the accuracy to be decent (50\%) but clearly not optimized as SGD by itself can reach $80\%$ testing accuracy on 10
+principal components. In order to run without weights exploding, we standardized the weights at each step, thereby providing more stability at the cost of expressivity. 
+
+We found that one of the issues in our experiment was the tendency for the learning rule to choose a learning rule that updated the weights according to exactly the optimal weights of a training example, and hence substantial overfitting. This was balanced
+by choosing more trajectories for each timestep. Of course, this ended up creating a fairly general learning rule that wasn't able to improve substantially at all. 
+\section{Meta-Reinforcement Learning in the Brain}
+
+Wang et al. discussed the 
+an notion of "meta-learning" in the brain where the prefrontal cortex acts as a recurrent neural network which triggers actions
+and internally holding a notion of the value of a state. Phasic Dopamine (DA) is suggested to act in a similar way to
+how our policy network changed the weights of the neural network. In particular, the synaptic weights are adjusted
+by the model-free RL DA system, where DA releases are similar to the reward prediction error in temporal-difference RL algorithms.
+
+
+Basically try and repeat the thing in Box 4 of https://www.sciencedirect.com/science/article/pii/S1364661319300610
+
+
+
+
+maybe this is garbage lol
+
+In the Theory of Neural Computation, we can see reinforcement-learning-esque
+regimes. In particular researchers have found that the dopamine system seems
+to follow the TD algorithm, a reinforcement learning algorithm. In particular, the error
+function of the TD algorithm operates in the same way to how dopamine neurons learn their firing rates in order to 
+associate stimuli with future rewards. In this case, the dopamine neuron is the agent
+and it can change its firing rate as an action. 
 
 
 
@@ -307,6 +366,7 @@ You may use color figures.  However, it is best for the figure captions and the
 paper body to be legible if the paper is printed in either black/white or in
 color.
 
+\cite{texbook}
 \subsection{Tables}
 
 All tables must be centered, neat, clean and legible.  The table number and
@@ -348,40 +408,7 @@ Authors should discuss both positive and negative outcomes, if any. For instance
 who may benefit from this research, b) who may be put at disadvantage from this research, c) what are the consequences of failure of the system, and d) whether the task/method leverages
 biases in the data. If authors believe this is not applicable to them, authors can simply state this.
 
-Use unnumbered first level headings for this section, which should go at the end of the paper. {\bf Note that this section does not count towards the eight pages of content that are allowed.}
-
-\begin{ack}
-Use unnumbered first level headings for the acknowledgments. All acknowledgments
-go at the end of the paper before the list of references. Moreover, you are required to declare 
-funding (financial activities supporting the submitted work) and competing interests (related financial activities outside the submitted work). 
-More information about this disclosure can be found at: \url{https://neurips.cc/Conferences/2020/PaperInformation/FundingDisclosure}.
 
 
-Do {\bf not} include this section in the anonymized submission, only in the final paper. You can use the \texttt{ack} environment provided in the style file to autmoatically hide this section in the anonymized submission.
-\end{ack}
-
-\section*{References}
-
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-{\bf Note that the Reference section does not count towards the eight pages of content that are allowed.}
-\medskip
-
-\small
-
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
-
+\bibliography{sample} 
 \end{document}
