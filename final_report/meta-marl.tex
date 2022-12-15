@@ -169,22 +169,22 @@ We attempted to implement a multi-agent environment using the more advanced but 
 
 \section{Comparison to Known Learning Rules}
 
-We compare this meta-learning, or learning learning rules, to accepted learning rules in the literature. SGD converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at NP and WP. We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
+We compare the policy that is learned from our meta-RL model to accepted learning rules in the literature. SGD converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at NP and WP. We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.43]{sgd_ts}  \includegraphics[scale=0.43]{np_ts}  \includegraphics[scale=0.43]{wp_ts}\includegraphics[scale=0.31]{metarl_ts}
-  \caption{We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform no further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac{1}{L_y L_h}$. \label{fig:teachstudent}}
+  \caption{We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform minimal further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac{1}{L_y L_h}$. \label{fig:teachstudent}}
 \end{figure}
 
 The idea behind NP and WP is to take some perturbation $\*\xi$ of either
-the weights or the nodes, and then see how that changes the objective or loss. The learning rule update
+the weights or the nodes, and then see how that changes the objective or loss \cite{wpnp}. The learning rule update
 then corresponds to scaling this perturbation by whether or not it increases or decreases
 the loss. Consider a general neural network with $L$ layers and a data set $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$. 
 Let $\*W_{\ell} \in \R^{R_{\ell+1} \times R_{\ell}}$ where $R_\ell$ is the number of 
 neurons in layer $\ell$. We define the forward pass as
 \begin{equation}\label{forward}\*X^{(\ell)} = \sigma\left( \*X^{(\ell-1)}\*W_{\ell-1}^\top\right).\end{equation}
-Where $\sigma$ is some non-linearity such as ReLU. We use MSE loss for student teacher
+Where $\sigma$ is some non-linearity (we use ReLU). For student teacher, we use the MSE loss 
 \begin{equation}
 \label{mseloss}
 E = \frac{1}{NR_L}\frac 12 \| \*X^{(L)}- \*Y\|^2.
@@ -192,34 +192,35 @@ E = \frac{1}{NR_L}\frac 12 \| \*X^{(L)}- \*Y\|^2.
 and for classification into $C = R_L$ classes let 
 \begin{equation}
 \label{crossentropy}
-p(\*x_i^{(L)} = r) = \frac{\exp x_{j,r}^{(L)}}{\sum_{j=1}^C \exp x_{i,j}^{(L)}}
+p(\*x_i^{(L)} = r) = \frac{\exp x_{j,r}^{(L)}}{\sum_{j=1}^C \exp x_{i,j}^{(L)}}.
 \end{equation}
-we use cross entropy loss
+We use cross entropy loss for classification
 \[E = -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\*x_i^{(L)} = r) \]
 In SGD, we use backpropagation to update the weight parameters by 
 \[\Delta_{SGD} \* W_{\ell} = \eta\frac{\partial E}{\partial \*W_{\ell}},\] 
 where the chain rule means we 
 need to "transport" these values backwards through the neural network. On the other 
 hand, in WP/NP, we have two forward passes. For the first, we define the same as \ref{forward}, 
-however for NP, we will let the perturbation be a vector $\xi \in \R^{N\times R_{\ell}}$ where all entries are distributed 
+however the second pass for each of WP/NP we introduce a perturbation. For NP, we will let the 
+perturbation be a vector $\xi \in \R^{N\times R_{\ell}}$ where all entries are distributed 
 i.i.d $\mathcal{N}(0,\sigma)$. We can then define the forward pass as 
 \[ \widetilde{\*X}^{(\ell)} = \sigma\left(\widetilde{\*X}^{(\ell-1)}\*W_{\ell -1}^\top + \*\xi^{(\ell)} \right).\]
 While for WP we take $\*\Xi^{(\ell)} \in \R^{R_{\ell + 1 }\times R_\ell}$ where all entries are distributed 
 i.i.d $\mathcal{N}(0,\sigma)$. 
 \[ \hat{\*X}^{(\ell)} = \sigma\left( \hat{\*X}^{(\ell-1)}\left(\*W_{\ell -1} + \*\Xi^{(\ell-1)}\right)^\top  \right).\]
-We can then define two errors for each NP and WP respectively. For MSE
+We can then define two errors for each NP and WP respectively. For regression
 \[ E_N = \frac{1}{NR_L} \frac 12 \| \widetilde{\* X}^{(L)} - \* Y \|^2 \qquad\qquad E_W = \frac{1}{NR_L} \frac 12 \| \hat{\* X}^{(L)} - \* Y \|^2. \]
 For classification
-\[E_N  =  -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\widetilde{\*x}_i^{(L)} = r) \qquad E_W =  -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\hat{\*x}_i^{(L)} = r)\]
+\[E_N  =  -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\widetilde{\*x}_i^{(L)} = r) \qquad E_W =  -\frac 1N \sum_{i=1}^N \sum_{r=1}^C y_r \log p(\hat{\*x}_i^{(L)} = r).\]
 From here we can simply transmit the global error signal $E-E_N$ or $E-E_W$ and update our weights according
 to this error signal. In particular, we update parameters as follows for NP
-\[ \Delta_{NP} \*W_{\ell} =\frac{\eta}{\sigma} (E-E_N) \sum_{i=1}^{R_{\ell+1}} \*x^{(\ell)}_i \* \xi^{(\ell+1)\top} \]
+\[ \Delta_{NP} \*W_{\ell} =\frac{\eta}{\sigma} (E-E_N) \sum_{i=1}^{R_{\ell+1}} \*x^{(\ell)}_i \* \xi^{(\ell+1)\top}. \]
 While for WP we update as
-\[ \Delta_{WP} \*W_{\ell} = \frac{\eta}{\sigma} (E-E_W) \* \Xi^{(\ell)} \]
- The idea is that perturbations which cause decrease the objective will be added to 
+\[ \Delta_{WP} \*W_{\ell} = \frac{\eta}{\sigma} (E-E_W) \* \Xi^{(\ell)} .\]
+ The idea is that perturbations which cause a decrease in the objective will be added to 
  the parameters of the model. In expectation we have that up to a constant
 \[ \left\langle \Delta_{NP}\*W_{\ell} \right\rangle_{\*\xi^{(\ell)}}= \left\langle \Delta_{WP}\*W_{\ell} \right\rangle_{\*\Xi^{(\ell)}} =  \Delta_{SGD}\*W_{\ell}.\]
-Node and weight perturbation are often used in small teacher-student learning cases 
+Node and weight perturbation are often used in teacher-student learning cases 
 where there is only a single perceptron. Recent work by Hiratani et al. explores node perturbation
 in neural networks with a hidden layer, and finds computational and stability issues that
 suggest biological implausibility \cite{hiratani2022on}. Nonetheless, these perturbation techniques remain an interesting way
@@ -234,11 +235,11 @@ to investigate possible learning rules for neurons.
 
 
 
-\paragraph{Training on Student-Teacher (Fig. \ref{fig:teachstudent})} For the student-teacher model, we consider a neural network with one hidden layer. We set the three layer's width as $L_x = 10, L_h = 100, L_y = 10$. We have a teacher with a hidden set of weights $\*W^*_h, \*W^*_y$ that generates a dataset $N=512$ with noise $\*\zeta_i \in \R^{L_y}$ for $i=1,\ldots, N$, where each element of $\*\zeta_i$ is i.i.d $\mathcal{N}(0, \sigma_t)$. For our cases we set $\sigma_t = 0.01$ as node-perturbation will be very noisy and unstable otherwise. We define our dataset then as $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$ where each element of $\*x_i$ is i.i.d standard normal, and 
-\[ \*y_i = \sigma\left(\sigma(\*x_i \*W^{*\top}_h)\*W_y^{*\top}\right) + \*\zeta_i \]
-Where we used ReLU as the non-linearity for $\sigma$. We are thus optimizing a single-hidden layer neural network 
+\paragraph{Training on Student-Teacher (Fig. \ref{fig:teachstudent})} For the student-teacher model, we consider a neural network with one hidden layer. We set the three layer's widths as $L_x = 10, L_h = 100, L_y = 10$. We have a teacher with a hidden set of weights $\*W^*_h, \*W^*_y$ that generates a dataset $N=512$ with noise $\*\zeta_i \in \R^{L_y}$ for $i=1,\ldots, N$, where each element of $\*\zeta_i$ is i.i.d $\mathcal{N}(0, \sigma_t)$. For our cases we set $\sigma_t = 0.01$, as node-perturbation is noisy and unstable otherwise. We define our dataset as $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$ where each element of $\*x_i$ is i.i.d standard normal, and 
+\[ \*y_i = \sigma\left(\sigma(\*x_i \*W^{*\top}_h)\*W_y^{*\top}\right) + \*\zeta_i. \]
+We use ReLU as the non-linearity for $\sigma$. We are thus optimizing a single-hidden layer neural network 
 \[ \hat{\*y}_i =  \sigma\left(\sigma(\*x_i \*W^{\top}_h)\*W_y^{\top}\right).\]
-We are using MSE loss as in \ref{mseloss}.
+We use MSE loss as in \ref{mseloss}.
 
 
 \paragraph{Training on MNIST (Fig. \ref{fig:mnist})} Going to MNIST, the problem becomes much more noisy. 
@@ -246,7 +247,7 @@ In order to decrease noise, we first preprocess by standardizing and projecting 
 data onto the first 10 principal components ($\sim99\%$ of the variance), and decrease the learning rate 
 by a factor of 100. It is also necessary to increase the hidden layer width $L_h = 1000$, as otherwise the model did not
 have sufficient complexity. We train on a subset of the data $N=512$. We use the same single-hidden layer architecture, with cross entropy loss as in \ref{crossentropy} with $C=10$ for the 10 different digits. As observed by Hiratani et al., the amount of training time required 
-for these global error signal models to converge for MNIST is much higher (1e5) which was unfeasible for computationally \cite{hiratani2022on}.
+for these global error signal models to converge for MNIST is much higher ($10^5$) which was unfeasible due to computational reasons \cite{hiratani2022on}.
 We find the accuracy to be decent (50\%) but clearly not optimized as SGD by itself can reach $80\%$ testing accuracy on 10
 principal components Fig. \ref{fig:mnistacc}. In order to run without weights exploding, we standardized the weights at each step, thereby providing more stability at the cost of expressivity. 
 
@@ -256,19 +257,19 @@ principal components Fig. \ref{fig:mnistacc}. In order to run without weights ex
 \end{figure}
 
 
-We found that one of the issues in our experiment was the tendency for the learning rule to choose a 
+We found that one of the issues in our experiment was the tendency for the policy to choose a 
 learning rule that updated the weights according to exactly the optimal weights of a training example, 
-and hence substantial overfitting. This could be balanced
-by choosing more trajectories for each timestep. 
+and hence resulted in substantial overfitting. This could be balanced
+by choosing more trajectories for each timestep and training for a longer period. 
 \section{Conclusion and Further Steps}
 
 \paragraph{Meta-Reinforcement Learning in the Brain} Wang et al. discussed the 
-an notion of "meta-learning" in the brain where the prefrontal cortex acts as a recurrent neural network which triggers actions
+a notion of "meta-learning" in the brain where the prefrontal cortex acts as a recurrent neural network which triggers actions
 and internally holding a notion of the value of a state. Phasic Dopamine (DA) is suggested to act in a similar way to
 how our policy network changed the weights of the neural network. In particular, the synaptic weights are adjusted
 by the model-free RL DA system, where DA releases are similar to the reward prediction error in temporal-difference 
 RL algorithms. The reason why meta-RL fits this structure better than standard RL is because of the ability to use past 
-experiences the brain has in order to learn an optimal policy, and this is clearly seen in humans and animal brains in general \cite{wang2018pfc}.
+experiences the brain has in order to learn an optimal policy, and this is clearly seen in human and animal brains \cite{wang2018pfc}.
 
 \paragraph{Computation Limits and Further Steps} Wang et al. were able to achieve results relating meta-RL to the prefrontal cortex and 
 dopamine system with the large computational power of DeepMind \cite{wang2018pfc}. 
