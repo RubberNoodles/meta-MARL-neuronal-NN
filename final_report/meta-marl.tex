@@ -104,7 +104,7 @@
   at DeepMind to explore how meta-RL could potentially model how neurons learn \cite{wang2018pfc}. The structure is as follows: an overarching policy network mimcs the dopamine system by guiding a fully connected neural network to 
   update its synaptic weights. Over time, the policy network learns an optimal learning rule for which to update
   the weights in the neural network. We show that the optimal policy is to quickly jump to the optimal weights, which does
-  not generalize as well as other common learning rules such as Stochastic Gradient Descent (SGD), Weight Perturbation (WP), and Node Perturbation (NP).
+  not generalize as well as other common learning rules such as Stochastic Gradient Descent (SGD), Weight Perturbation (WP), and Node Perturbation (NP) on teacher-student and MNIST.
 \end{abstract}
 \section{Introduction to Meta-Reinforcement Learning}
 
@@ -146,6 +146,14 @@ tasks that are similar.
 
 \section{(Multi-Agent) Meta-Learning RL to find Optimal Learning Rules}
 
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.6]{marlnn} \includegraphics[scale=0.6]{singleagent}
+  \caption{In both figures, we have a neural network as the lower loop. For any given timestep $t$, we have a policy $\pi(\theta_t)$ which governs the weight updates as the neural network performs \texttt{epochs = S} forward passes. There are a total of $\mathcal{T}$ different random initializations of weights at each timestep, each running for $S$ epochs. At each epoch, the network emits a reward corresponding to the negative loss, which the agent will use to improve its policy for timestep $t+1$ to create $\pi(\theta_{t+1})$. On the left, we have a Multi-Agent Meta-RL system, where each agent is in control of a set of weights and can only see the previous layer's activations. Each agent receives the same total reward. On the right, we have a single agent that does all of the work of the agents in the multi-agent regime, thereby having complete knowledge of all weights.   \label{fig:meta-rl}}
+\end{figure}
+ 
+ 
 A very basic way to model a brain is as a simple fixed architecture feedforward neural network 
 where each neuron is its own agent and we are optimizing a multi-agent reinforcement learning problem. 
 Then, to imitate a model-based dopamine
@@ -178,22 +186,20 @@ the policy to converge to a learning rule that is optimal for the given task, wh
 or learning with global error signals that we will look at below, but rather one that is more fine-tuned to the particular
 set of problems, for example learning from a teacher with noise or classifying digits in the MNIST dataset.
 
-\begin{figure}
-  \centering
-  \includegraphics[scale=0.6]{marlnn} \includegraphics[scale=0.6]{singleagent}
-  \caption{In both figures, we have a neural network as the lower loop. For any given timestep $t$, we have a policy $\pi(\theta_t)$ which governs the weight updates as the neural network performs \texttt{epochs = S} forward passes. There are a total of $\mathcal{T}$ different random initializations of weights at each timestep, each running for $S$ epochs. At each epoch, the network emits a reward corresponding to the negative loss, which the agent will use to improve its policy for timestep $t+1$ to create $\pi(\theta_{t+1})$. On the left, we have a Multi-Agent Meta-RL system, where each agent is in control of a set of weights and can only see the previous layer's activations. Each agent receives the same total reward. On the right, we have a single agent that does all of the work of the agents in the multi-agent regime, thereby having complete knowledge of all weights.   \label{fig:meta-rl}}
-\end{figure}
- 
 
-\paragraph{PettingZoo and others...} \textcolor{red}{Hi alex can you do this part}
+\paragraph{Code Implementation} The project is implemented using the popular \href{https://www.gymlibrary.dev/}{OpenAI Gym} and \href{https://stable-baselines3.readthedocs.io/en/master/}{Stable Baselines 3} libraries for reinforcement learning \cite{openaigym, sb3}. We implement a custom Gym environment that takes the base neural network architecture as an input, along with the training dataset used for calculating the loss. Then at each timestep, the environment receives a candidate set of weights for the base network, and evaluates its loss on the given dataset.
 
+We attempted to implement a multi-agent environment using the more advanced but flexible \href{https://github.com/thu-ml/tianshou}{Tianshou} library and the \href{https://pettingzoo.farama.org/}{Petting Zoo} library for MARL. This implementation is still a work in progress, but if completed, would allow different agents to control different parts of the base network \cite{tianshou, pettingzoo}.
 
-Code for can be found at \url{www.gethackedforfree.net}
 \section{Comparison to Known Learning Rules}
 
 We compare this meta-learning, or learning learning rules, to accepted learning rules in the literature. SGD converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at NP and WP. We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
 
-
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.43]{sgd_ts}  \includegraphics[scale=0.43]{np_ts}  \includegraphics[scale=0.43]{wp_ts}\includegraphics[scale=0.31]{metarl_ts}
+  \caption{We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform no further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac{1}{L_y L_h}$. \label{fig:teachstudent}}
+\end{figure}
 
 The idea behind NP and WP is to take some perturbation $\*\xi$ of either
 the weights or the nodes, and then see how that changes the objective or loss. The learning rule update
@@ -242,16 +248,12 @@ where there is only a single perceptron. Recent work by Hiratani et al. explores
 in neural networks with a hidden layer, and finds computational and stability issues that
 suggest biological implausibility \cite{hiratani2022on}. Nonetheless, these perturbation techniques remain an interesting way
 to investigate possible learning rules for neurons. 
-\begin{figure}
-  \centering
-  \includegraphics[scale=0.43]{sgd_ts}  \includegraphics[scale=0.43]{np_ts}  \includegraphics[scale=0.43]{wp_ts}
-  \caption{Discuss the results from teacher-student here  \label{fig:teachstudent}}
-\end{figure}
+
 
 \begin{figure}
   \centering
-  \includegraphics[scale=0.43]{sgd_mnist}  \includegraphics[scale=0.43]{np_mnist}  \includegraphics[scale=0.43]{wp_mnist}
-  \caption{Discuss the results from mnist here  \label{fig:mnist}}
+  \includegraphics[scale=0.43]{sgd_mnist}  \includegraphics[scale=0.43]{np_mnist}  \includegraphics[scale=0.43]{wp_mnist}\includegraphics[scale=0.31]{metarl_mnist}
+  \caption{Again, we see the Meta-RL NN learn its weights instantly, and as a result have a constant loss for both training and testing. NP is set to $\eta = 10^{-4}$, which is unstable. NP will converge for $\eta\ll 10^{-6}$, but the number of epochs needed to make any reasonable progress was too high to be computationally feasible. $\sigma = \frac{1}{L_y L_h}$.\label{fig:mnist}}
 \end{figure}
 
 
@@ -267,37 +269,39 @@ We are using MSE loss as in \ref{mseloss}.
 In order to decrease noise, we first preprocess by standardizing and projecting the
 data onto the first 10 principal components ($\sim99\%$ of the variance), and decrease the learning rate 
 by a factor of 100. It is also necessary to increase the hidden layer width $L_h = 1000$, as otherwise the model did not
-have sufficient complexity. We use the same single-hidden layer architecture, with cross entropy loss as in \ref{crossentropy} with $C=10$ for the 10 different digits. As observed by Hiratani et al., the amount of training time required 
+have sufficient complexity. We train on a subset of the data $N=512$. We use the same single-hidden layer architecture, with cross entropy loss as in \ref{crossentropy} with $C=10$ for the 10 different digits. As observed by Hiratani et al., the amount of training time required 
 for these global error signal models to converge for MNIST is much higher (1e5) which was unfeasible for computationally \cite{hiratani2022on}.
 We find the accuracy to be decent (50\%) but clearly not optimized as SGD by itself can reach $80\%$ testing accuracy on 10
 principal components Fig. \ref{fig:mnistacc}. In order to run without weights exploding, we standardized the weights at each step, thereby providing more stability at the cost of expressivity. 
 
 \begin{figure}
   \centering
-  \includegraphics[scale=0.6]{acc}  \caption{Discuss the results from mnist here  \label{fig:mnistacc}}
+  \includegraphics[scale=0.6]{acc}  \caption{Test accuracy for Meta-RL is constant due to the policy network choosing the optimal weights during training instantly. NP is under performing due to being excessively noisy.  \label{fig:mnistacc}}
 \end{figure}
 
 
 We found that one of the issues in our experiment was the tendency for the learning rule to choose a learning rule that updated the weights according to exactly the optimal weights of a training example, and hence substantial overfitting. This was balanced
 by choosing more trajectories for each timestep. Of course, this ended up creating a fairly general learning rule that wasn't able to improve substantially at all. 
-\section{Meta-Reinforcement Learning in the Brain}
+\section{Conclusion and Further Steps}
 
-Wang et al. discussed the 
+\paragraph{Meta-Reinforcement Learning in the Brain} Wang et al. discussed the 
 an notion of "meta-learning" in the brain where the prefrontal cortex acts as a recurrent neural network which triggers actions
 and internally holding a notion of the value of a state. Phasic Dopamine (DA) is suggested to act in a similar way to
 how our policy network changed the weights of the neural network. In particular, the synaptic weights are adjusted
-by the model-free RL DA system, where DA releases are similar to the reward prediction error in temporal-difference RL algorithms.
+by the model-free RL DA system, where DA releases are similar to the reward prediction error in temporal-difference 
+RL algorithms. The reason why meta-RL fits this structure better than standard RL is because of the ability to use past 
+experiences the brain has in order to learn an optimal policy, and this is clearly seen in humans and animal brains in general \cite{wang2018pfc}.
 
-Our Meta-MARL attempts include
-maybe this is garbage lol
+\paragraph{Computation Limits and Further Steps} Wang et al. were able to achieve results relating meta-RL to the prefrontal cortex and 
+dopamine system with the large computational power of DeepMind \cite{wang2018pfc}. 
+Our results show how the parameter size of models of this nature must be substantially 
+larger in order to achieve results that are generalizable to even classic tasks such as
+MNIST or student-teacher. Further steps in this research include exploring a wider distribution
+of tasks $p(\mathcal{T})$ in order to harness the generalizability of meta-RL. Given more computational
+power it would also be interesting to see if the multi-agent meta-RL system has promise to generalize
+more as the optimal weights would be less clear due to the lack of information.
 
-In the Theory of Neural Computation, we can see reinforcement-learning-esque
-regimes. In particular researchers have found that the dopamine system seems
-to follow the TD algorithm, a reinforcement learning algorithm. In particular, the error
-function of the TD algorithm operates in the same way to how dopamine neurons learn their firing rates in order to 
-associate stimuli with future rewards. In this case, the dopamine neuron is the agent
-and it can change its firing rate as an action. 
-
+Code for this project can be found at \url{https://github.com/RubberNoodles/meta-MARL-neuronal-NN}.
 
 \bibliography{sample} 
 \end{document}
