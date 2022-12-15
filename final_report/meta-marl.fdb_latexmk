@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex meta-marl"] 1671078668 "meta-marl.aux" "meta-marl.bbl" "meta-marl" 1671078670
+["bibtex meta-marl"] 1671078758 "meta-marl.aux" "meta-marl.bbl" "meta-marl" 1671078827
   "/usr/local/texlive/2022/texmf-dist/bibtex/bst/natbib/abbrvnat.bst" 1233624470 26532 66bed5cc59495faaa3f9ae9af9fa5e42 ""
-  "meta-marl.aux" 1671078670 7016 65f601e9a234f210586c215577afb321 "pdflatex"
+  "meta-marl.aux" 1671078826 7016 10f48976b41333f0ef237c3c1c7cd262 "pdflatex"
   "sample.bib" 1671078428 3834 c4ffabc029323f777030e4dd09eaa7ee ""
   (generated)
   "meta-marl.bbl"
   "meta-marl.blg"
-["pdflatex"] 1671078668 "/Users/alexandercai/Developer/ml/rl/meta-MARL-neuronal-NN/final_report/meta-marl.tex" "meta-marl.pdf" "meta-marl" 1671078670
-  "/Users/alexandercai/Developer/ml/rl/meta-MARL-neuronal-NN/final_report/meta-marl.tex" 1671078666 20216 7b37a147b23b427f5ce397494ad00418 ""
+["pdflatex"] 1671078825 "/Users/alexandercai/Developer/ml/rl/meta-MARL-neuronal-NN/final_report/meta-marl.tex" "meta-marl.pdf" "meta-marl" 1671078827
+  "/Users/alexandercai/Developer/ml/rl/meta-MARL-neuronal-NN/final_report/meta-marl.tex" 1671078824 20153 2285cdea4a26febc94bde421678b74fb ""
   "/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -125,10 +125,10 @@
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
   "acc.png" 1671076569 38168 645a43c302ba624c4454d98bed5115a7 ""
   "marlnn.png" 1671075598 11821 5d31af19394f7b077b6d718021d22d97 ""
-  "meta-marl.aux" 1671078670 7016 65f601e9a234f210586c215577afb321 "pdflatex"
-  "meta-marl.bbl" 1671078668 3380 f055d6721f6dd6c5637a1d205d433bfa "bibtex meta-marl"
-  "meta-marl.out" 1671078670 1114 aee536174eaecd867d87e621bba495f2 "pdflatex"
-  "meta-marl.tex" 1671078666 20216 7b37a147b23b427f5ce397494ad00418 ""
+  "meta-marl.aux" 1671078826 7016 10f48976b41333f0ef237c3c1c7cd262 "pdflatex"
+  "meta-marl.bbl" 1671078758 3380 f055d6721f6dd6c5637a1d205d433bfa "bibtex meta-marl"
+  "meta-marl.out" 1671078826 1114 aee536174eaecd867d87e621bba495f2 "pdflatex"
+  "meta-marl.tex" 1671078824 20153 2285cdea4a26febc94bde421678b74fb ""
   "metarl_mnist.png" 1671076569 33436 dc22d509dfa33b522c9530118dabf6e1 ""
   "metarl_ts.png" 1671076569 35315 822b5fd29f1e1b788888c9c283f50624 ""
   "neurips_2020.sty" 1671075598 11308 33fa6948195904410daa8773ea6feb42 ""

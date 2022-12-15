@@ -27,27 +27,28 @@
 \citation{openaigym,sb3}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Our neural meta-learning paradigm, framed as a multi-agent problem (left) and a single-agent problem (right). We seek to find the parameters $\theta $ which maximize reward, which we define as the negative of the training loss on a fixed training dataset. We do this by optimizing the policy network's parameters using Proximal Policy Optimization \cite  {schulman_ppo}. In the multi-agent framing, each agent is in control of a set of weights and can only see the activations of its own weights and those of the previous agent. All agents receive the same total reward. In the single-agent framing, a single agent has complete control and knowledge of all weights. }}{2}{figure.1}\protected@file@percent }
 \newlabel{fig:meta-rl}{{1}{2}{Our neural meta-learning paradigm, framed as a multi-agent problem (left) and a single-agent problem (right). We seek to find the parameters $\theta $ which maximize reward, which we define as the negative of the training loss on a fixed training dataset. We do this by optimizing the policy network's parameters using Proximal Policy Optimization \cite {schulman_ppo}. In the multi-agent framing, each agent is in control of a set of weights and can only see the activations of its own weights and those of the previous agent. All agents receive the same total reward. In the single-agent framing, a single agent has complete control and knowledge of all weights}{figure.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Code Implementation}{2}{section*.1}\protected@file@percent }
 \citation{tianshou,pettingzoo}
 \citation{mazzoni1991}
-\@writefile{toc}{\contentsline {paragraph}{Code Implementation}{3}{section*.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform no further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac  {1}{L_y L_h}$. }}{3}{figure.2}\protected@file@percent }
+\newlabel{fig:teachstudent}{{2}{3}{We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform no further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac {1}{L_y L_h}$}{figure.2}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Comparison to Known Learning Rules}{3}{section.3}\protected@file@percent }
-\newlabel{forward}{{1}{3}{Comparison to Known Learning Rules}{equation.3.1}{}}
-\newlabel{mseloss}{{2}{3}{Comparison to Known Learning Rules}{equation.3.2}{}}
-\newlabel{crossentropy}{{3}{3}{Comparison to Known Learning Rules}{equation.3.3}{}}
 \citation{hiratani2022on}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform no further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac  {1}{L_y L_h}$. }}{4}{figure.2}\protected@file@percent }
-\newlabel{fig:teachstudent}{{2}{4}{We find that the policy that the meta-RL system finds is to instantly jump to a certain set of weights, and then perform no further updates. The learning rates were chosen to optimize the loss, in the range of $\eta =1.0$ to $0.1$. $\sigma = \frac {1}{L_y L_h}$}{figure.2}{}}
+\newlabel{forward}{{1}{4}{Comparison to Known Learning Rules}{equation.3.1}{}}
+\newlabel{mseloss}{{2}{4}{Comparison to Known Learning Rules}{equation.3.2}{}}
+\newlabel{crossentropy}{{3}{4}{Comparison to Known Learning Rules}{equation.3.3}{}}
 \citation{hiratani2022on}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Again, we see the Meta-RL NN learn its weights instantly, and as a result have a constant loss for both training and testing. NP is set to $\eta = 10^{-4}$, which is unstable. NP will converge for $\eta \ll 10^{-6}$, but the number of epochs needed to make any reasonable progress was too high to be computationally feasible. $\sigma = \frac  {1}{L_y L_h}$.}}{5}{figure.3}\protected@file@percent }
 \newlabel{fig:mnist}{{3}{5}{Again, we see the Meta-RL NN learn its weights instantly, and as a result have a constant loss for both training and testing. NP is set to $\eta = 10^{-4}$, which is unstable. NP will converge for $\eta \ll 10^{-6}$, but the number of epochs needed to make any reasonable progress was too high to be computationally feasible. $\sigma = \frac {1}{L_y L_h}$}{figure.3}{}}
 \@writefile{toc}{\contentsline {paragraph}{Training on Student-Teacher (Fig. \ref  {fig:teachstudent})}{5}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training on MNIST (Fig. \ref  {fig:mnist})}{5}{section*.3}\protected@file@percent }
 \citation{wang2018pfc}
 \citation{wang2018pfc}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Test accuracy for Meta-RL is constant due to the policy network choosing the optimal weights during training instantly. NP is under performing due to being excessively noisy. }}{6}{figure.4}\protected@file@percent }
 \newlabel{fig:mnistacc}{{4}{6}{Test accuracy for Meta-RL is constant due to the policy network choosing the optimal weights during training instantly. NP is under performing due to being excessively noisy}{figure.4}{}}
-\@writefile{toc}{\contentsline {paragraph}{Training on MNIST (Fig. \ref  {fig:mnist})}{6}{section*.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {4}Conclusion and Further Steps}{6}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Meta-Reinforcement Learning in the Brain}{6}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Computation Limits and Further Steps}{6}{section*.5}\protected@file@percent }
 \bibdata{sample}
 \bibcite{botvinick2019408}{{1}{2019}{{Botvinick et~al.}}{{Botvinick, Ritter, Wang, Kurth-Nelson, Blundell, and Hassabis}}}
 \bibcite{openaigym}{{2}{2016}{{Brockman et~al.}}{{Brockman, Cheung, Pettersson, Schneider, Schulman, Tang, and Zaremba}}}
@@ -58,5 +59,4 @@
 \bibcite{pettingzoo}{{7}{2020}{{Terry et~al.}}{{Terry, Black, Grammel, Jayakumar, Hari, Sulivan, Santos, Perez, Horsch, Dieffendahl, Williams, Lokesh, Sullivan, and Ravi}}}
 \bibcite{wang2018pfc}{{8}{2018}{{Wang et~al.}}{{Wang, Kurth-Nelson, Kumaran, Tirumala, Soyer, Leibo, Hassabis, and Botvinick}}}
 \bibcite{tianshou}{{9}{2022}{{Weng et~al.}}{{Weng, Chen, Yan, You, Duburcq, Zhang, Su, Su, and Zhu}}}
-\@writefile{toc}{\contentsline {paragraph}{Computation Limits and Further Steps}{7}{section*.5}\protected@file@percent }
 \gdef \@abspage@last{7}

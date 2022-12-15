@@ -133,14 +133,9 @@ works \cite{wang2018pfc}.
 \end{figure}
  
 
-We model neural network training as follows.
-
-A very basic way to model a brain is as a simple feedforward neural network 
-where each neuron is its own agent and we are optimizing a multi-agent reinforcement learning problem. 
-Then, to imitate a model-based dopamine
+We model neural network training as follows. We aim to optimize the parameters of a ``base'' network $f_{\phi},$ parameterized by $\phi \in \Phi$, to minimize the training error on a dataset. Then, to imitate a model-based dopamine
 system which determines which synapses are reinforced, we consider a policy
-neural network which will update the weights for the neural net \cite{wang2018pfc, botvinick2019408}. The state space of
-this system is essentially the possible weights that this neural net can have. 
+neural network which will update the weights for the neural net \cite{wang2018pfc, botvinick2019408}. The state space and action space of the MDP thus coincide with $\Phi$.
 
 From here we can construct two different
 systems. One is where a single agent gets information on all of the weights,
