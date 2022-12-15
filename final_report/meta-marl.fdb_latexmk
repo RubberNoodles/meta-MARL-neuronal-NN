@@ -1,14 +1,14 @@
 # Fdb version 3
-["bibtex meta-marl"] 1671076272 "meta-marl.aux" "meta-marl.bbl" "meta-marl" 1671076274
+["bibtex meta-marl"] 1671078726 "meta-marl.aux" "meta-marl.bbl" "meta-marl" 1671078727
   "/usr/local/texlive/2020/texmf-dist/bibtex/bst/natbib/abbrvnat.bst" 1233624470 26532 66bed5cc59495faaa3f9ae9af9fa5e42 ""
-  "meta-marl.aux" 1671076274 7258 fb97a728121a6264c49d5aadd341c481 "pdflatex"
-  "sample.bib" 1671076267 3330 c0aadea5e1296d4182fca00b55cec138 ""
+  "meta-marl.aux" 1671078727 7002 5fba67ff8acb8bb96e1f23a00cd9f3f8 "pdflatex"
+  "sample.bib" 1671078723 3834 c4ffabc029323f777030e4dd09eaa7ee ""
   (generated)
   "meta-marl.blg"
   "meta-marl.bbl"
-["pdflatex"] 1671076273 "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.tex" "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.pdf" "meta-marl" 1671076274
-  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.aux" 1671076274 7258 fb97a728121a6264c49d5aadd341c481 ""
-  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.tex" 1671076212 21256 3a78cc99b709973253adb885861a52b1 ""
+["pdflatex"] 1671078726 "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.tex" "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.pdf" "meta-marl" 1671078727
+  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.aux" 1671078727 7002 5fba67ff8acb8bb96e1f23a00cd9f3f8 ""
+  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.tex" 1671078723 20335 bee9b43cb09cad16ff8cf7507a869a24 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -39,6 +39,7 @@
   "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb" 1248133631 31809 8670ca339bf94e56da1fc21c80635e2a ""
   "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb" 1248133631 32915 7bf7720c61a5b3a7ff25b0964421c9b6 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1248133631 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb" 1215737283 169201 9ebf99020dde51a5086e186761a34e8f ""
@@ -121,10 +122,10 @@
   "/usr/local/texlive/2020/texmf.cnf" 1586288231 577 d60164b4589a341208aff7a667fbbdcb ""
   "acc.png" 1671074625 38168 645a43c302ba624c4454d98bed5115a7 ""
   "marlnn.png" 1671054407 11821 5d31af19394f7b077b6d718021d22d97 ""
-  "meta-marl.aux" 1671076274 7258 fb97a728121a6264c49d5aadd341c481 "pdflatex"
-  "meta-marl.bbl" 1671076273 3109 546a271b2c63d82d120fb6d89a7adf27 "bibtex meta-marl"
-  "meta-marl.out" 1671076274 308 30883d4cddd15d948e54203d67eba4fd "pdflatex"
-  "meta-marl.tex" 1671076212 21256 3a78cc99b709973253adb885861a52b1 ""
+  "meta-marl.aux" 1671078727 7002 5fba67ff8acb8bb96e1f23a00cd9f3f8 "pdflatex"
+  "meta-marl.bbl" 1671078726 3380 f055d6721f6dd6c5637a1d205d433bfa "bibtex meta-marl"
+  "meta-marl.out" 1671078727 319 55b56e19a7c589c08d268fdd82746689 "pdflatex"
+  "meta-marl.tex" 1671078723 20335 bee9b43cb09cad16ff8cf7507a869a24 ""
   "metarl_mnist.png" 1671075336 33436 dc22d509dfa33b522c9530118dabf6e1 ""
   "metarl_ts.png" 1671075366 35315 822b5fd29f1e1b788888c9c283f50624 ""
   "neurips_2020.sty" 1671068794 11308 33fa6948195904410daa8773ea6feb42 ""
@@ -136,9 +137,9 @@
   "wp_mnist.png" 1671070197 38627 fa0fcd160991003acb8e1bb6b3b8ef00 ""
   "wp_ts.png" 1671070197 39607 b4025e50afb298e65fc690bec913b420 ""
   (generated)
-  "meta-marl.pdf"
-  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.pdf"
   "meta-marl.out"
-  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.log"
+  "meta-marl.pdf"
   "meta-marl.log"
+  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.pdf"
   "meta-marl.aux"
+  "/Users/seesea/Documents/Harvard-Courses/AM226/meta-MARL-neuronal-NN/final_report/meta-marl.log"

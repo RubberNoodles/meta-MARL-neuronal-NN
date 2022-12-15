@@ -54,13 +54,11 @@
 
 \author{%
   Alexander D.~Cai \\
-  Harvard School of Engineering\\
   Harvard College \\
   Cambridge, MA 02138 \\
   \texttt{alexcai@college.harvard.edu} \\
   \And
   Oliver Cheng \\
-  Department of Mathematics \\
   Harvard College \\
   Cambridge, MA 02138 \\
   \texttt{ocheng@college.harvard.edu} \\
@@ -98,63 +96,46 @@
 \maketitle
 
 \begin{abstract}
-  Reinforcement learning (RL) has recently introduced meta-learning to make the training process substantially more data-efficient, reducing the 
-  amount of data required by orders of magnitude. This brings back the idea that RL learning can
-  be a model and bring insights to how the brain performs its learning. We build off of work from Wang et al.
-  at DeepMind to explore how meta-RL could potentially model how neurons learn \cite{wang2018pfc}. The structure is as follows: an overarching policy network mimcs the dopamine system by guiding a fully connected neural network to 
+  In the field of reinforcement learning (RL), the subfield of meta-learning has recently gained popularity. Meta-learning proposes to not only learn the policy (which selects actions), but rather a flexible \emph{RL algorithm} which learns the policy. This claims to make the training process more data-efficient and generalizable across tasks. We build off of work from \citet{wang2018pfc} that investigates the implications for biological learning. The structure is as follows: an overarching \emph{policy network} mimics the dopamine system by guiding a fully connected neural network to 
   update its synaptic weights. Over time, the policy network learns an optimal learning rule for which to update
-  the weights in the neural network. We show that the optimal policy is to quickly jump to the optimal weights, which does
-  not generalize as well as other common learning rules such as Stochastic Gradient Descent (SGD), Weight Perturbation (WP), and Node Perturbation (NP) on teacher-student and MNIST.
+  the weights in the neural network. We empirically find that the optimal policy is to quickly jump to the optimal weights for the training distribution, which does
+  not generalize as well as other common learning rules such as Stochastic Gradient Descent (SGD), Weight Perturbation (WP), and Node Perturbation (NP) on teacher-student setups and MNIST.
 \end{abstract}
+
 \section{Introduction to Meta-Reinforcement Learning}
 
 In recent years there has been a growing amount of excitement about 
-\textit{meta-learning} in order to solve a wider set of problems. This is 
-often used in reinforcement learning tasks. In a standard reinforcement
- learning task, we have a policy that governs how an agent transitions 
-between states in an environment. There are rewards that the agent can 
-receive, and the optimal policy is one that maximizes rewards. We can 
-formalize this by defining a reinforcement learning regime as a Markov 
-Decision Process (MDP) where $S$ is the set of states, $A$ is the set 
-of actions, $T$ is the transition distribution (how states transition given 
-an action), and $R$ is the reward, which is a function of the state. Let 
-$\pi_\theta$ be the policy, which is parameterized by some $\theta$. 
-Thus for some "task" $\mathcal{T}$, the goal is thus to maximize the objective 
-\[ \mathcal{J}_{\mathcal{T}}(\theta) = \mathbb{E}_{a_t \sim \pi_\theta(s_t), s_{t+1}
- \sim T(s_t, a_t)} \left( \sum_t \gamma^t R(s_t, a_{t-1}) \right).\]
-The task $\mathcal{T}$ determines the rewards, and hence the policy that is optimized 
-depend heavily on what the task $\mathcal{T}$ is. 
+\emph{meta-learning} in order to solve a wider set of problems.
+In the typical reinforcement learning setup, an agent interacts with an environment by taking actions and receiving rewards. The goal is to maximize the total reward received. We can 
+formalize this as a Markov 
+Decision Process (MDP) $\{ \mathcal{S}, \mathcal{A}, P, R, \gamma \}$ where $\mathcal{S}$ is the set of states, $\mathcal{A}$ is the set 
+of actions, $P:\mathcal{S} \times \mathcal{A} \to \Delta(\mathcal{S})$ governs the state transitions, and $R: \mathcal{S} \times \mathcal{A} \to \mathbb{R}$ is the reward function. Let 
+$\pi_\theta$ be the parameterized policy. 
+Thus for some MDP $\mathcal{M}$, the goal is to maximize the mean discounted reward 
+\[ \mathcal{J}_{\mathcal{M}}(\theta) = \mathbb{E}_{a_{t=0}^{\infty} \sim \pi_\theta(s_t), s_{t+1}
+ \sim P(s_t, a_t)} \left( \sum_t \gamma^t R(s_t, a_{t-1}) \right).\]
 
-Reinforcement learning is used to solve many problems such as Go, Chess, 
-Atari games, etc. where the environment is unknown and is structured in 
-a way which an agent must discover an optimal strategy. This framework 
-gives us a way to view human beings and the nervous system as a 
-reinforcement learning program where we humans are the agent. 
-(Un)Fortunately, this is a bit too basic of a way of modeling human 
-beings and the brain, as reinforcement learning networks have not taken 
-over humanity yet (citation needed). One of the reasons is that rewards 
-and the task that an agent needs to optimize a policy for is constantly 
-changing in the real world. Thus we introduce the idea of meta-learning, 
-where rather than optimizing a single policy for a single task $\mathcal{T}$, 
-we optimize for a learning strategy on how to optimize a policy for a distribution 
-of tasks $p(\mathcal{T})$. This idea is motivated by the idea in psychology of 
- "learning how to learn" and is conceptually closer to how the brain 
-works \cite{wang2018pfc}. With meta-learning, due to
-the way we are improving the way we are finding the policy, this is a way
-we can introduce the idea of "past experiences" to help train policy for 
-tasks that are similar.
+This framework gives us a way to view human beings and the nervous system as a 
+reinforcement learning program where the human is the agent. One notable trait of the human brain is that it learns and maintains numerous distinct skills, as opposed to typical RL algorithms which can only optimize for a given task. To generalize, we instead seek to develop meta-learning algorithms, 
+where rather than optimizing a single policy for a single task,
+we aim to learn an RL algorithm which finds optimal policies over a diverse distribution 
+of tasks. This idea is motivated by the idea in psychology of 
+ ``learning how to learn'' and is conceptually closer to how the brain 
+works \cite{wang2018pfc}.
 
-\section{(Multi-Agent) Meta-Learning RL to find Optimal Learning Rules}
+\section{(Multi-Agent) Reinforcement Meta-Learning to find Optimal Learning Rules}
 
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.6]{marlnn} \includegraphics[scale=0.6]{singleagent}
-  \caption{In both figures, we have a neural network as the lower loop. For any given timestep $t$, we have a policy $\pi(\theta_t)$ which governs the weight updates as the neural network performs \texttt{epochs = S} forward passes. There are a total of $\mathcal{T}$ different random initializations of weights at each timestep, each running for $S$ epochs. At each epoch, the network emits a reward corresponding to the negative loss, which the agent will use to improve its policy for timestep $t+1$ to create $\pi(\theta_{t+1})$. On the left, we have a Multi-Agent Meta-RL system, where each agent is in control of a set of weights and can only see the previous layer's activations. Each agent receives the same total reward. On the right, we have a single agent that does all of the work of the agents in the multi-agent regime, thereby having complete knowledge of all weights.   \label{fig:meta-rl}}
+  \caption{Our neural meta-learning paradigm, framed as a multi-agent problem (left) and a single-agent problem (right). We seek to find the parameters $\theta$ which maximize reward, which we define as the negative of the training loss on a fixed training dataset. We do this by optimizing the policy network's parameters using Proximal Policy Optimization \cite{schulman_ppo}. In the multi-agent framing, each agent is in control of a set of weights and can only see the activations of its own weights and those of the previous agent. All agents receive the same total reward. In the single-agent framing, a single agent has complete control and knowledge of all weights.   \label{fig:meta-rl}}
 \end{figure}
  
- 
-A very basic way to model a brain is as a simple fixed architecture feedforward neural network 
+
+We model neural network training as follows.
+
+A very basic way to model a brain is as a simple feedforward neural network 
 where each neuron is its own agent and we are optimizing a multi-agent reinforcement learning problem. 
 Then, to imitate a model-based dopamine
 system which determines which synapses are reinforced, we consider a policy
@@ -202,7 +183,7 @@ We compare the policy that is learned from our meta-RL model to accepted learnin
 \end{figure}
 
 The idea behind NP and WP is to take some perturbation $\*\xi$ of either
-the weights or the nodes, and then see how that changes the objective or loss. The learning rule update
+the weights or the nodes, and then see how that changes the objective or loss \cite{wpnp}. The learning rule update
 then corresponds to scaling this perturbation by whether or not it increases or decreases
 the loss. Consider a general neural network with $L$ layers and a data set $\{\*x_i^{(0)},\*y_i\}_{i=1}^N$. 
 Let $\*W_{\ell} \in \R^{R_{\ell+1} \times R_{\ell}}$ where $R_\ell$ is the number of 
