@@ -42,7 +42,7 @@
 \usepackage{microtype}      % microtypography
 
 % \title{Formatting Instructions For NeurIPS 2020}
-\title{Multi Agent Meta Reinforcement Learning on Neural Networks}
+\title{Meta Reinforcement Learning on Neural Networks}
 
 % The \author macro works with any number of authors. There are two commands
 % used to separate the names and addresses of multiple authors: \And and \AND.
@@ -98,11 +98,13 @@
 \maketitle
 
 \begin{abstract}
-  The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
-  both the left- and right-hand margins. Use 10~point type, with a vertical
-  spacing (leading) of 11~points.  The word \textbf{Abstract} must be centered,
-  bold, and in point size 12. Two line spaces precede the abstract. The abstract
-  must be limited to one paragraph.\cite{wang2018pfc}
+  Reinforcement learning (RL) has recently introduced meta-learning to make the training process substantially more data-efficient, reducing the 
+  amount of data required by orders of magnitude. This brings back the idea that RL learning can
+  be a model and bring insights to how the brain performs its learning. We build off of work from Wang et al.
+  at DeepMind to explore how meta-RL could potentially model how neurons learn \cite{wang2018pfc}. The structure is as follows: an overarching policy network mimcs the dopamine system by guiding a fully connected neural network to 
+  update its synaptic weights. Over time, the policy network learns an optimal learning rule for which to update
+  the weights in the neural network. We show that the optimal policy is to quickly jump to the optimal weights, which does
+  not generalize as well as other common learning rules such as Stochastic Gradient Descent (SGD), Weight Perturbation (WP), and Node Perturbation (NP).
 \end{abstract}
 \section{Introduction to Meta-Reinforcement Learning}
 
@@ -142,7 +144,7 @@ the way we are improving the way we are finding the policy, this is a way
 we can introduce the idea of "past experiences" to help train policy for 
 tasks that are similar.
 
-\section{Multi-Agent Meta-Learning RL to find Optimal Learning Rules}
+\section{(Multi-Agent) Meta-Learning RL to find Optimal Learning Rules}
 
 A very basic way to model a brain is as a simple fixed architecture feedforward neural network 
 where each neuron is its own agent and we are optimizing a multi-agent reinforcement learning problem. 
@@ -151,15 +153,18 @@ system which determines which synapses are reinforced, we consider a policy
 neural network which will update the weights for the neural net \cite{wang2018pfc, botvinick2019408}. The state space of
 this system is essentially the possible weights that this neural net can have. 
 
-From here we construct two different
-systems and compare them. One is where a single agent gets information on all of the weights,
+From here we can construct two different
+systems. One is where a single agent gets information on all of the weights,
 and can take actions to improve weights accordingly. This is less biologically plausible since it would be difficult
 for any neuron in the brain to have access to have all of this data. The second system we consider is setting one agent
 for each layer. Each agent has information about the previous layer's weights and activations, and is able to control
 the weights to the next layer. In other words, the agent corresponding to the the $\ell$-th layer, $\*x^{(\ell)}$, has control over the weights 
-$[\*W^{(\ell)}]_{ij}$. 
+$[\*W^{(\ell)}]_{ij}$. This is more biologically plausible as this would imply each agent need not have connections to all the neurons in 
+the network, but rather a local subset of them. Unfortunately, although the second system is conceptually closer to biology, the implementation
+with current libraries is shaky at best. Theoretically it would not perform any better than the first system, as each agent has less information
+to operate on, and since the policy is a deep neural network, the loss of this information would be a large hindrance to performance.
 
-In both systems, we use Proximal Policy Optimization (PPO) in order to progressively improve the policy. We can define
+We use Proximal Policy Optimization (PPO) in order to progressively improve the policy. We can define
 our reward as the negative loss for the neural network, thus having smaller absolute loss will be a larger reward, and
 PPO will find a policy that optimizes for the largest expected reward. To compute the reward for any given policy, we 
 take $T$ different trajectories. For each trajectory $t$ we find how the loss $E_t$ 
@@ -167,7 +172,7 @@ decreases after a successive forward passes (1e5 epochs) through the neural
 network with weights specified by the agent/policy network. The reward is 
 then transmitted as $\langle - E_t \rangle$ and the policy is updated. This process constitutes a single timestep.
 
-Recall from Stochastic Gradient Descent (SGD) we have update rules that involve using the gradient to traverse through the loss landscape,
+Recall from SGD we have update rules that involve using the gradient to traverse through the loss landscape,
 in our case we are learning a learning rule and hence the meta "learning how to learn" concept. The goal is for
 the policy to converge to a learning rule that is optimal for the given task, which will not necessarily be SGD
 or learning with global error signals that we will look at below, but rather one that is more fine-tuned to the particular
@@ -176,15 +181,17 @@ set of problems, for example learning from a teacher with noise or classifying d
 \begin{figure}
   \centering
   \includegraphics[scale=0.6]{marlnn} \includegraphics[scale=0.6]{singleagent}
-  \caption{We have the two meta-rl systems that we will build out \label{fig:meta-rl}}
+  \caption{In both figures, we have a neural network as the lower loop. For any given timestep $t$, we have a policy $\pi(\theta_t)$ which governs the weight updates as the neural network performs \texttt{epochs = S} forward passes. There are a total of $\mathcal{T}$ different random initializations of weights at each timestep, each running for $S$ epochs. At each epoch, the network emits a reward corresponding to the negative loss, which the agent will use to improve its policy for timestep $t+1$ to create $\pi(\theta_{t+1})$. On the left, we have a Multi-Agent Meta-RL system, where each agent is in control of a set of weights and can only see the previous layer's activations. Each agent receives the same total reward. On the right, we have a single agent that does all of the work of the agents in the multi-agent regime, thereby having complete knowledge of all weights.   \label{fig:meta-rl}}
 \end{figure}
  
 
 \paragraph{PettingZoo and others...} \textcolor{red}{Hi alex can you do this part}
 
+
+Code for can be found at \url{www.gethackedforfree.net}
 \section{Comparison to Known Learning Rules}
 
-We compare this meta-learning, or learning learning rules, to accepted learning rules in the literature. Stochastic gradient descent (SGD) converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at node (NP) and weight perturbation (WP). We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
+We compare this meta-learning, or learning learning rules, to accepted learning rules in the literature. SGD converges the quickest, but due to the weight transport problem, is not biologically plausible \cite{mazzoni1991}. More biologically plausible alternatives involve learning from a global error signal, and involve perturbation-type learning rules. Global error signals have been observed in the brain, but it is still under much research exactly how the brain uses these error signals in order to learn and update neurons. We will look at NP and WP. We compare how our new model does for teacher-student learning and learning to classify the MNIST dataset.
 
 
 
@@ -235,11 +242,16 @@ where there is only a single perceptron. Recent work by Hiratani et al. explores
 in neural networks with a hidden layer, and finds computational and stability issues that
 suggest biological implausibility \cite{hiratani2022on}. Nonetheless, these perturbation techniques remain an interesting way
 to investigate possible learning rules for neurons. 
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.43]{sgd_ts}  \includegraphics[scale=0.43]{np_ts}  \includegraphics[scale=0.43]{wp_ts}
+  \caption{Discuss the results from teacher-student here  \label{fig:teachstudent}}
+\end{figure}
 
 \begin{figure}
   \centering
-  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Discuss the results from teacher-student here  \label{fig:teachstudent}}
+  \includegraphics[scale=0.43]{sgd_mnist}  \includegraphics[scale=0.43]{np_mnist}  \includegraphics[scale=0.43]{wp_mnist}
+  \caption{Discuss the results from mnist here  \label{fig:mnist}}
 \end{figure}
 
 
@@ -249,11 +261,6 @@ to investigate possible learning rules for neurons.
 Where we used ReLU as the non-linearity for $\sigma$. We are thus optimizing a single-hidden layer neural network 
 \[ \hat{\*y}_i =  \sigma\left(\sigma(\*x_i \*W^{\top}_h)\*W_y^{\top}\right).\]
 We are using MSE loss as in \ref{mseloss}.
-\begin{figure}
-  \centering
-  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Discuss the results from teacher-student here  \label{fig:mnist}}
-\end{figure}
 
 
 \paragraph{Training on MNIST (Fig. \ref{fig:mnist})} Going to MNIST, the problem becomes much more noisy. 
@@ -263,7 +270,13 @@ by a factor of 100. It is also necessary to increase the hidden layer width $L_h
 have sufficient complexity. We use the same single-hidden layer architecture, with cross entropy loss as in \ref{crossentropy} with $C=10$ for the 10 different digits. As observed by Hiratani et al., the amount of training time required 
 for these global error signal models to converge for MNIST is much higher (1e5) which was unfeasible for computationally \cite{hiratani2022on}.
 We find the accuracy to be decent (50\%) but clearly not optimized as SGD by itself can reach $80\%$ testing accuracy on 10
-principal components. In order to run without weights exploding, we standardized the weights at each step, thereby providing more stability at the cost of expressivity. 
+principal components Fig. \ref{fig:mnistacc}. In order to run without weights exploding, we standardized the weights at each step, thereby providing more stability at the cost of expressivity. 
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.6]{acc}  \caption{Discuss the results from mnist here  \label{fig:mnistacc}}
+\end{figure}
+
 
 We found that one of the issues in our experiment was the tendency for the learning rule to choose a learning rule that updated the weights according to exactly the optimal weights of a training example, and hence substantial overfitting. This was balanced
 by choosing more trajectories for each timestep. Of course, this ended up creating a fairly general learning rule that wasn't able to improve substantially at all. 
@@ -275,12 +288,7 @@ and internally holding a notion of the value of a state. Phasic Dopamine (DA) is
 how our policy network changed the weights of the neural network. In particular, the synaptic weights are adjusted
 by the model-free RL DA system, where DA releases are similar to the reward prediction error in temporal-difference RL algorithms.
 
-
-Basically try and repeat the thing in Box 4 of https://www.sciencedirect.com/science/article/pii/S1364661319300610
-
-
-
-
+Our Meta-MARL attempts include
 maybe this is garbage lol
 
 In the Theory of Neural Computation, we can see reinforcement-learning-esque
@@ -289,125 +297,6 @@ to follow the TD algorithm, a reinforcement learning algorithm. In particular, t
 function of the TD algorithm operates in the same way to how dopamine neurons learn their firing rates in order to 
 associate stimuli with future rewards. In this case, the dopamine neuron is the agent
 and it can change its firing rate as an action. 
-
-
-
-
-
-\section{Citations, figures, tables, references}
-\label{others}
-
-These instructions apply to everyone.
-
-\subsection{Citations within the text}
-
-The \verb+natbib+ package will be loaded for you by default.  Citations may be
-author/year or numeric, as long as you maintain internal consistency.  As to the
-format of the references themselves, any style is acceptable as long as it is
-used consistently.
-
-The documentation for \verb+natbib+ may be found at
-\begin{center}
-  \url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-Of note is the command \verb+\citet+, which produces citations appropriate for
-use in inline text.  For example,
-\begin{verbatim}
-   \citet{hasselmo} investigated\dots
-\end{verbatim}
-produces
-\begin{quote}
-  Hasselmo, et al.\ (1995) investigated\dots
-\end{quote}
-
-If you wish to load the \verb+natbib+ package with options, you may add the
-following before loading the \verb+neurips_2020+ package:
-\begin{verbatim}
-   \PassOptionsToPackage{options}{natbib}
-\end{verbatim}
-
-If \verb+natbib+ clashes with another package you load, you can add the optional
-argument \verb+nonatbib+ when loading the style file:
-\begin{verbatim}
-   \usepackage[nonatbib]{neurips_2020}
-\end{verbatim}
-
-As submission is double blind, refer to your own published work in the third
-person. That is, use ``In the previous work of Jones et al.\ [4],'' not ``In our
-previous work [4].'' If you cite your other papers that are not widely available
-(e.g., a journal paper under review), use anonymous author names in the
-citation, e.g., an author of the form ``A.\ Anonymous.''
-
-\subsection{Footnotes}
-
-Footnotes should be used sparingly.  If you do require a footnote, indicate
-footnotes with a number\footnote{Sample of the first footnote.} in the
-text. Place the footnotes at the bottom of the page on which they appear.
-Precede the footnote with a horizontal rule of 2~inches (12~picas).
-
-Note that footnotes are properly typeset \emph{after} punctuation
-marks.\footnote{As in this example.}
-
-\subsection{Figures}
-
-\begin{figure}
-  \centering
-  \fbox{\rule[-.5cm]{0cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-  \caption{Sample figure caption.}
-\end{figure}
-
-All artwork must be neat, clean, and legible. Lines should be dark enough for
-purposes of reproduction. The figure number and caption always appear after the
-figure. Place one line space before the figure caption and one line space after
-the figure. The figure caption should be lower case (except for first word and
-proper nouns); figures are numbered consecutively.
-
-You may use color figures.  However, it is best for the figure captions and the
-paper body to be legible if the paper is printed in either black/white or in
-color.
-
-\cite{texbook}
-\subsection{Tables}
-
-All tables must be centered, neat, clean and legible.  The table number and
-title always appear before the table.  See Table~\ref{sample-table}.
-
-Place one line space before the table title, one line space after the
-table title, and one line space after the table. The table title must
-be lower case (except for first word and proper nouns); tables are
-numbered consecutively.
-
-Note that publication-quality tables \emph{do not contain vertical rules.} We
-strongly suggest the use of the \verb+booktabs+ package, which allows for
-typesetting high-quality, professional tables:
-\begin{center}
-  \url{https://www.ctan.org/pkg/booktabs}
-\end{center}
-This package was used to typeset Table~\ref{sample-table}.
-
-\begin{table}
-  \caption{Sample table title}
-  \label{sample-table}
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    \multicolumn{2}{c}{Part}                   \\
-    \cmidrule(r){1-2}
-    Name     & Description     & Size ($\mu$m) \\
-    \midrule
-    Dendrite & Input terminal  & $\sim$100     \\
-    Axon     & Output terminal & $\sim$10      \\
-    Soma     & Cell body       & up to $10^6$  \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-\section*{Broader Impact}
-
-Authors are required to include a statement of the broader impact of their work, including its ethical aspects and future societal consequences. 
-Authors should discuss both positive and negative outcomes, if any. For instance, authors should discuss a) 
-who may benefit from this research, b) who may be put at disadvantage from this research, c) what are the consequences of failure of the system, and d) whether the task/method leverages
-biases in the data. If authors believe this is not applicable to them, authors can simply state this.
-
 
 
 \bibliography{sample} 

@@ -1,0 +1,37 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Botvinick et~al.(2019)Botvinick, Ritter, Wang, Kurth-Nelson, Blundell,
+  and Hassabis]{botvinick2019408}
+M.~Botvinick, S.~Ritter, J.~X. Wang, Z.~Kurth-Nelson, C.~Blundell, and
+  D.~Hassabis.
+\newblock Reinforcement learning, fast and slow.
+\newblock \emph{Trends in Cognitive Sciences}, 23\penalty0 (5):\penalty0
+  408--422, 2019.
+\newblock URL
+  \url{https://www.sciencedirect.com/science/article/pii/S1364661319300610}.
+
+\bibitem[Hiratani et~al.(2022)Hiratani, Mehta, Lillicrap, and
+  Latham]{hiratani2022on}
+N.~Hiratani, Y.~Mehta, T.~P. Lillicrap, and P.~E. Latham.
+\newblock On the stability and scalability of node perturbation learning.
+\newblock 2022.
+\newblock URL \url{https://openreview.net/forum?id=X0CKM7QV5k}.
+
+\bibitem[P et~al.(1991)P, RA, and MI]{mazzoni1991}
+M.~P, A.~RA, and J.~MI.
+\newblock A more biologically plausible learning rule for neural networks.
+\newblock \emph{Proc Natl Acad Sci U S A}, 15:\penalty0 4433--7, 1991.
+
+\bibitem[Wang et~al.(2018)Wang, Kurth-Nelson, Kumaran, Tirumala, Soyer, Leibo,
+  Hassabis, and Botvinick]{wang2018pfc}
+J.~X. Wang, Z.~Kurth-Nelson, D.~Kumaran, D.~Tirumala, H.~Soyer, J.~Z. Leibo,
+  D.~Hassabis, and M.~Botvinick.
+\newblock Prefrontal cortex as a meta-reinforcement learning system.
+\newblock \emph{Nature Neurosci}, 21:\penalty0 860--868, 2018.
+
+\end{thebibliography}
