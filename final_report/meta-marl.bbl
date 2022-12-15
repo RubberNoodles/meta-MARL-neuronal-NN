@@ -1,4 +1,4 @@
-\begin{thebibliography}{8}
+\begin{thebibliography}{9}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -40,6 +40,12 @@ A.~Raffin, A.~Hill, A.~Gleave, A.~Kanervisto, M.~Ernestus, and N.~Dormann.
 \newblock \emph{Journal of Machine Learning Research}, 22\penalty0
   (268):\penalty0 1--8, 2021.
 \newblock URL \url{http://jmlr.org/papers/v22/20-1364.html}.
+
+\bibitem[Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
+  Klimov]{schulman_ppo}
+J.~Schulman, F.~Wolski, P.~Dhariwal, A.~Radford, and O.~Klimov.
+\newblock Proximal policy optimization algorithms, 2017.
+\newblock URL \url{https://arxiv.org/abs/1707.06347}.
 
 \bibitem[Terry et~al.(2020)Terry, Black, Grammel, Jayakumar, Hari, Sulivan,
   Santos, Perez, Horsch, Dieffendahl, Williams, Lokesh, Sullivan, and
